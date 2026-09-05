@@ -4,9 +4,8 @@ import java.util.Vector;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.lushprojects.circuitjs1.client.ChipElm.Pin;
 
-// instances of subcircuits
+// 子电路的实例
 
 public class CustomCompositeElm extends CompositeElm {
     String modelName;
@@ -19,8 +18,8 @@ public class CustomCompositeElm extends CompositeElm {
     public CustomCompositeElm(int xx, int yy) {
 	super(xx, yy);
 	
-	// use last model as default when creating new element in UI.
-	// use default otherwise, to avoid infinite recursion when creating nested subcircuits.
+	// 在 UI 中创建新元件时，使用最后一个模型作为默认值。
+	// 否则使用默认值，以避免创建嵌套子电路时无限递归。
 	modelName = (xx == 0 && yy == 0) ? "default" : lastModelName;
 	
 	flags |= FLAG_ESCAPE;
@@ -35,7 +34,7 @@ public class CustomCompositeElm extends CompositeElm {
     }
     
     public String dump() {
-	// insert model name before the elements
+	// 在元件之前插入模型名称
 	String s = super.dumpWithMask(0);
 	s += " " + CustomLogicModel.escape(modelName);
 	s += dumpElements();
@@ -45,7 +44,7 @@ public class CustomCompositeElm extends CompositeElm {
     String dumpModel() {
 	String modelStr = "";
 	
-	// dump models of all children
+	// 导出所有子元件的模型
 	for (int i = 0; i < compElmList.size(); i++) {
 	    CircuitElm ce = compElmList.get(i);
 	    String m = ce.dumpModel();
@@ -58,7 +57,7 @@ public class CustomCompositeElm extends CompositeElm {
 	if (model.dumped)
 	    return modelStr;
 	
-	// dump our model
+	// 导出我们自己的模型
 	if (!modelStr.isEmpty())
 	    modelStr += "\n";
 	modelStr += model.dump();

@@ -38,8 +38,8 @@ class FFT {
     }
 
     /*
-     * This uses the radix-2 decimation-in-time FFT algorithm.
-     * Based on
+     * 这里使用的是基-2 按时间抽取的 FFT 算法。
+     * 基于
      * http://www.ee.columbia.edu/~ronw/code/MEAPsoft/doc/html/FFT_8java-source.html
      * Douglas L. Jones 
      * University of Illinois at Urbana-Champaign 

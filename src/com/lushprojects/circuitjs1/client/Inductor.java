@@ -39,22 +39,21 @@ class Inductor {
     }
     boolean isTrapezoidal() { return (flags & FLAG_BACK_EULER) == 0; }
     void reset() {
-	// need to set curSourceValue here in case one of inductor nodes is node 0.  In that case
-	// calculateCurrent() may get called (from setNodeVoltage()) when analyzing circuit, before
-	// startIteration() gets called
+	// 需要在这里设置 curSourceValue，以防电感的某个节点是节点 0。在这种情况下，
+	// 在分析电路时（startIteration() 被调用之前），calculateCurrent()（由 setNodeVoltage() 调用）可能会被调用
 	current = curSourceValue = 0;
     }
     void stamp(int n0, int n1) {
-	// inductor companion model using trapezoidal or backward euler
-	// approximations (Norton equivalent) consists of a current
-	// source in parallel with a resistor.  Trapezoidal is more
-	// accurate than backward euler but can cause oscillatory behavior.
-	// The oscillation is a real problem in circuits with switches.
+	// 电感的伴随模型使用梯形法或后向欧拉法
+	// 近似（诺顿等效），由一个与电阻并联的电流源组成。
+	// 梯形法比后向欧拉法更精确，
+	// 但可能引起振荡行为。
+	// 在含有开关的电路中，这种振荡是一个实际问题。
 	nodes[0] = n0;
 	nodes[1] = n1;
 	if (isTrapezoidal())
 	    compResistance = 2*inductance/sim.timeStep;
-	else // backward euler
+	else // 后向欧拉
 	    compResistance = inductance/sim.timeStep;
 	sim.stampResistor(nodes[0], nodes[1], compResistance);
 	sim.stampRightSide(nodes[0]);
@@ -65,14 +64,14 @@ class Inductor {
     void startIteration(double voltdiff) {
 	if (isTrapezoidal())
 	    curSourceValue = voltdiff/compResistance+current;
-	else // backward euler
+	else // 后向欧拉
 	    curSourceValue = current;
     }
     
     double calculateCurrent(double voltdiff) {
-	// we check compResistance because this might get called
-	// before stamp(), which sets compResistance, causing
-	// infinite current
+	// 我们检查 compResistance，因为此方法可能在
+	// stamp()（它会设置 compResistance）被调用之前
+	// 被调用，从而导致无限电流
 	if (compResistance > 0)
 	    current = voltdiff/compResistance + curSourceValue;
 	return current;

@@ -1,11 +1,8 @@
 package com.lushprojects.circuitjs1.client;
 
-import java.util.Date;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -63,7 +60,7 @@ public class ImportFromDropboxDialog extends DialogBox {
 			Window.alert("Dropbox links must start https://www.dropbox.com/");
 			return;
 		}
-		// Work-around to allow CORS access to dropbox links - see
+		// 允许对 Dropbox 链接进行 CORS 访问的变通方案 - 见
 		// https://www.dropboxforum.com/t5/API-support/CORS-issue-when-trying-to-download-shared-file/m-p/82466
 		link=link.replace("www.dropbox.com", "dl.dropboxusercontent.com");
 		doDropboxImport(link);

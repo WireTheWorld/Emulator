@@ -33,7 +33,7 @@ package com.lushprojects.circuitjs1.client;
 	    noDiagonal = true;
 	    inputCount = 2;
 	    
-	    // copy defaults from last gate edited
+	    // 从上次编辑的门电路复制默认值
 	    highVoltage = lastHighVoltage;
 	    if (lastSchmitt)
 		flags |= FLAG_SCHMITT;
@@ -76,7 +76,7 @@ package com.lushprojects.circuitjs1.client;
 		setSize(2);
 	    int hs = gheight;
 	    int i;
-	    ww = gwidth2; // was 24
+	    ww = gwidth2; // 原来是 24
 	    if (ww > dn/2)
 		ww = (int) (dn/2);
 	    if (isInverting() && ww+8 > dn/2)
@@ -171,10 +171,10 @@ package com.lushprojects.circuitjs1.client;
 	    if (isInverting())
 		f = !f;
 	    
-	    // detect oscillation (using same strategy as Atanua)
+	    // 检测振荡（使用与 Atanua 相同的策略）
 	    if (lastOutput == !f) {
 		if (oscillationCount++ > 50) {
-		    // output is oscillating too much, randomly leave output the same
+		    // 输出振荡过于频繁，随机保持输出不变
 		    oscillationCount = 0;
 		    if (sim.getrand(10) > 5)
 			f = lastOutput;
@@ -215,8 +215,8 @@ package com.lushprojects.circuitjs1.client;
 		setPoints();
 	    }
 	}
-	// there is no current path through the gate inputs, but there
-	// is an indirect path through the output to ground.
+	// 门电路输入端没有电流通路，但
+	// 通过输出端到地存在间接通路。
 	boolean getConnection(int n1, int n2) { return false; }
 	boolean hasGroundConnection(int n1) {
 	    return (n1 == inputCount);

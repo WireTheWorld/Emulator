@@ -92,7 +92,7 @@ public class Scrollbar extends  Composite implements
 		can.addMouseOverHandler(this);
 		can.addMouseWheelHandler(this);
 		
-		// our hack from CirSim doesn't work here so we have to handle touch events explicitly
+		// 我们在 CirSim 中的 hack 在这里不生效，因此必须显式处理触摸事件
 		can.addTouchStartHandler(this);
 		can.addTouchMoveHandler(this);
 		can.addTouchEndHandler(this);
@@ -192,8 +192,8 @@ public class Scrollbar extends  Composite implements
 			val=calcValueFromPos(x);	
 			dragging=true;
 			
-			// setCapture doesn't work on touch for some reason; touchend/touchmoved events
-			// don't get sent
+			// setCapture 在触摸设备上不知为何不生效；touchend/touchmoved 事件
+			// 不会被发送
 			if (mouse)
 			    Event.setCapture(can.getElement());
 		    }

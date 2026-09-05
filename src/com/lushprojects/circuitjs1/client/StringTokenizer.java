@@ -45,19 +45,17 @@ exception statement from your version. */
 
 
 /**
-* This class splits a string into tokens.  The caller can set on which
-* delimiters the string should be split and if the delimiters should be
-* returned. This is much simpler than {@link java.io.StreamTokenizer}.
+* 此类将字符串拆分为标记(token)。调用者可以设置按哪些
+* 分隔符拆分字符串,以及是否返回分隔符。
+* 这比 {@link java.io.StreamTokenizer} 简单得多。
 *
-* <p>You may change the delimiter set on the fly by calling
-* nextToken(String).  But the semantic is quite difficult; it even
-* depends on calling <code>hasMoreTokens()</code>.  You should call
-* <code>hasMoreTokens()</code> before, otherwise the old delimiters
-* after the last token are candidates for being returned.
+* <p>可以通过调用 nextToken(String) 在运行中更改分隔符集合。
+* 但语义相当复杂;它甚至取决于是否调用 <code>hasMoreTokens()</code>。
+* 在调用 <code>hasMoreTokens()</code> 之前,最后一个标记之后的
+* 旧分隔符都可能被返回。
 *
-* <p>If you want to get the delimiters, you have to use the three argument
-* constructor.  The delimiters are returned as token consisting of a
-* single character.
+* <p>如果想要获取分隔符,必须使用三参数构造函数。
+* 分隔符会作为由单个字符组成的标记返回。
 *
 * @author Jochen Hoenicke
 * @author Warren Levy (warrenl@cygnus.com)
@@ -66,42 +64,42 @@ exception statement from your version. */
 */
 public class StringTokenizer implements Enumeration<Object>
 {
-// WARNING: StringTokenizer is a CORE class in the bootstrap cycle. See the
-// comments in vm/reference/java/lang/Runtime for implications of this fact.
+// 警告:StringTokenizer 是引导周期中的核心类。此事实带来的影响
+// 参见 vm/reference/java/lang/Runtime 中的注释。
 
 /**
-* The position in the str, where we currently are.
+* 我们在 str 中当前所处的位置。
 */
 private int pos;
 
 /**
-* The string that should be split into tokens.
+* 要拆分为标记的字符串。
 */
 private final String str;
 
 /**
-* The length of the string.
+* 字符串的长度。
 */
 private final int len;
 
 /**
-* The string containing the delimiter characters.
+* 包含分隔符字符的字符串。
 */
 private String delim;
 
 /**
-* Tells, if we should return the delimiters.
+* 指示是否应返回分隔符。
 */
 private final boolean retDelims;
 
 /**
-* Creates a new StringTokenizer for the string <code>str</code>,
-* that should split on the default delimiter set (space, tab,
-* newline, return and formfeed), and which doesn't return the
-* delimiters.
+* 为字符串 <code>str</code> 创建一个新的 StringTokenizer,
+* 它将按默认分隔符集合(空格、制表符、
+* 换行、回车和换页)拆分,并且不返回
+* 分隔符。
 *
-* @param str The string to split
-* @throws NullPointerException if str is null
+* @param str 要拆分的字符串
+* @throws NullPointerException 如果 str 为 null
 */
 public StringTokenizer(String str)
 {
@@ -109,13 +107,13 @@ public StringTokenizer(String str)
 }
 
 /**
-* Create a new StringTokenizer, that splits the given string on
-* the given delimiter characters.  It doesn't return the delimiter
-* characters.
+* 创建一个新的 StringTokenizer,按给定的分隔符字符
+* 拆分给定字符串。它不返回分隔符
+* 字符。
 *
-* @param str the string to split
-* @param delim a string containing all delimiter characters
-* @throws NullPointerException if either argument is null
+* @param str 要拆分的字符串
+* @param delim 包含所有分隔符字符的字符串
+* @throws NullPointerException 如果任一参数为 null
 */
 public StringTokenizer(String str, String delim)
 {
@@ -123,16 +121,15 @@ public StringTokenizer(String str, String delim)
 }
 
 /**
-* Create a new StringTokenizer, that splits the given string on
-* the given delimiter characters.  If you set
-* <code>returnDelims</code> to <code>true</code>, the delimiter
-* characters are returned as tokens of their own.  The delimiter
-* tokens always consist of a single character.
+* 创建一个新的 StringTokenizer,按给定的分隔符字符
+* 拆分给定字符串。如果将 <code>returnDelims</code> 设为
+* <code>true</code>,则分隔符字符会作为独立的标记返回。
+* 分隔符标记始终由单个字符组成。
 *
-* @param str the string to split
-* @param delim a string containing all delimiter characters
-* @param returnDelims tells, if you want to get the delimiters
-* @throws NullPointerException if str or delim is null
+* @param str 要拆分的字符串
+* @param delim 包含所有分隔符字符的字符串
+* @param returnDelims 指示是否想要获取分隔符
+* @throws NullPointerException 如果 str 或 delim 为 null
 */
 public StringTokenizer(String str, String delim, boolean returnDelims)
 {
@@ -144,9 +141,9 @@ public StringTokenizer(String str, String delim, boolean returnDelims)
 }
 
 /**
-* Tells if there are more tokens.
+* 指示是否还有更多标记。
 *
-* @return true if the next call of nextToken() will succeed
+* @return 如果下一次调用 nextToken() 将会成功,则返回 true
 */
 public boolean hasMoreTokens()
 {
@@ -159,15 +156,15 @@ public boolean hasMoreTokens()
 }
 
 /**
-* Returns the nextToken, changing the delimiter set to the given
-* <code>delim</code>.  The change of the delimiter set is
-* permanent, ie. the next call of nextToken(), uses the same
-* delimiter set.
+* 返回下一个标记,并将分隔符集合更改为给定的
+* <code>delim</code>。分隔符集合的更改是
+* 永久性的,即下一次调用 nextToken() 时,会使用同一个
+* 分隔符集合。
 *
-* @param delim a string containing the new delimiter characters
-* @return the next token with respect to the new delimiter characters
-* @throws NoSuchElementException if there are no more tokens
-* @throws NullPointerException if delim is null
+* @param delim 包含新分隔符字符的字符串
+* @return 相对于新分隔符字符的下一个标记
+* @throws NoSuchElementException 如果没有更多标记
+* @throws NullPointerException 如果 delim 为 null
 */
 public String nextToken(String delim) throws NoSuchElementException
 {
@@ -176,10 +173,10 @@ public String nextToken(String delim) throws NoSuchElementException
 }
 
 /**
-* Returns the nextToken of the string.
+* 返回字符串的下一个标记。
 *
-* @return the next token with respect to the current delimiter characters
-* @throws NoSuchElementException if there are no more tokens
+* @return 相对于当前分隔符字符的下一个标记
+* @throws NoSuchElementException 如果没有更多标记
 */
 public String nextToken() throws NoSuchElementException
 {
@@ -202,10 +199,10 @@ public String nextToken() throws NoSuchElementException
 }
 
 /**
-* This does the same as hasMoreTokens. This is the
-* <code>Enumeration</code> interface method.
+* 这与 hasMoreTokens 功能相同。这是
+* <code>Enumeration</code> 接口的方法。
 *
-* @return true, if the next call of nextElement() will succeed
+* @return 如果下一次调用 nextElement() 将会成功,则返回 true
 * @see #hasMoreTokens()
 */
 public boolean hasMoreElements()
@@ -214,11 +211,11 @@ public boolean hasMoreElements()
 }
 
 /**
-* This does the same as nextTokens. This is the
-* <code>Enumeration</code> interface method.
+* 这与 nextToken() 功能相同。这是
+* <code>Enumeration</code> 接口的方法。
 *
-* @return the next token with respect to the current delimiter characters
-* @throws NoSuchElementException if there are no more tokens
+* @return 相对于当前分隔符字符的下一个标记
+* @throws NoSuchElementException 如果没有更多标记
 * @see #nextToken()
 */
 public Object nextElement() throws NoSuchElementException
@@ -227,49 +224,49 @@ public Object nextElement() throws NoSuchElementException
 }
 
 /**
-* This counts the number of remaining tokens in the string, with
-* respect to the current delimiter set.
+* 计算字符串中剩余标记的数量,相对于
+* 当前分隔符集合。
 *
-* @return the number of times <code>nextTokens()</code> will succeed
+* @return <code>nextToken()</code> 将会成功的次数
 * @see #nextToken()
 */
 public int countTokens()
 {
  int count = 0;
  int delimiterCount = 0;
- boolean tokenFound = false; // Set when a non-delimiter is found
+ boolean tokenFound = false; // 当找到非分隔符时置为 true
  int tmpPos = pos;
 
- // Note for efficiency, we count up the delimiters rather than check
- // retDelims every time we encounter one.  That way, we can
- // just do the conditional once at the end of the method
+ // 出于效率考虑,我们累加计数分隔符,而不是每次遇到
+ // 分隔符都检查 retDelims。这样一来,我们
+ // 只需在方法末尾做一次条件判断
  while (tmpPos < len)
    {
      if (delim.indexOf(str.charAt(tmpPos++)) >= 0)
        {
          if (tokenFound)
            {
-             // Got to the end of a token
+             // 已到达一个标记的末尾
              count++;
              tokenFound = false;
            }
-         delimiterCount++; // Increment for this delimiter
+         delimiterCount++; // 为此分隔符计数加一
        }
      else
        {
          tokenFound = true;
-         // Get to the end of the token
+         // 到达该标记的末尾
          while (tmpPos < len
                 && delim.indexOf(str.charAt(tmpPos)) < 0)
            ++tmpPos;
        }
    }
 
- // Make sure to count the last token
+ // 确保计算最后一个标记
  if (tokenFound)
    count++;
 
- // if counting delmiters add them into the token count
+ // 如果计算分隔符,则将它们计入标记总数
  return retDelims ? count + delimiterCount : count;
 }
 } // class StringTokenizer

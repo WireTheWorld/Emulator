@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// SPDT switch
+// 单刀双掷开关
 
     class Switch2Elm extends SwitchElm {
 	int link;
@@ -66,7 +66,7 @@ package com.lushprojects.circuitjs1.client;
 		interpPoint(lead1,  lead2,  swpoles[i], 1, hs);
 		interpPoint(point1, point2, swposts[i], 1, hs);
 	    }
-	    swpoles[i] = lead2; // for center off
+	    swpoles[i] = lead2; // 用于中间断开位置
 	    posCount = hasCenterOff() ? 3 : throwCount;
 	}
 	
@@ -74,18 +74,18 @@ package com.lushprojects.circuitjs1.client;
 	    setBbox(point1, point2, openhs);
 	    adjustBbox(swposts[0], swposts[throwCount-1]);
 
-	    // draw first lead
+	    // 绘制第一根引线
 	    setVoltageColor(g, volts[0]);
 	    drawThickLine(g, point1, lead1);
 
-	    // draw other leads
+	    // 绘制其他引线
 	    int i;
 	    for (i = 0; i != throwCount; i++) {
 		setVoltageColor(g, volts[i+1]);
 		drawThickLine(g, swpoles[i], swposts[i]);
 	    }
 	    
-	    // draw switch
+	    // 绘制开关
 	    if (!needsHighlight())
 		g.setColor(whiteColor);
 	    drawThickLine(g, lead1, swpoles[position]);
@@ -118,7 +118,7 @@ package com.lushprojects.circuitjs1.client;
 		current = 0;
 	}
 	void stamp() {
-	    if (position == 2 && hasCenterOff()) // in center?
+	    if (position == 2 && hasCenterOff()) // 在中间位置？
 		return;
 	    sim.stampVoltageSource(nodes[0], nodes[position+1], voltSource, 0);
 	}
@@ -184,7 +184,7 @@ package com.lushprojects.circuitjs1.client;
 	    	super.setEditValue(n, ei);
 	}
 	
-	// this is for backwards compatibility only.  we only support it if throwCount = 2
+	// 这仅用于向后兼容。仅当 throwCount = 2 时才支持
 	boolean hasCenterOff() { return (flags & FLAG_CENTER_OFF) != 0 && throwCount == 2; }
 	
 	int getShortcut() { return 'S'; }

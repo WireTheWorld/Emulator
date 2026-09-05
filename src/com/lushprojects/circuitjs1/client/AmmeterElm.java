@@ -71,21 +71,21 @@ package com.lushprojects.circuitjs1.client;
     Point mid;
     static final int FLAG_SHOWCURRENT = 1;
     void stepFinished(){
-        count++;//how many counts are in a cycle    
-        total += current*current; //sum of squares
+        count++;//一个周期内有多少个计数    
+        total += current*current; //平方和
         if (current>maxI && increasingI){
             maxI = current;
             increasingI = true;
             decreasingI = false;
         }
-        if (current<maxI && increasingI){//change of direction I now going down - at start of waveform
-            lastMaxI=maxI; //capture last maximum 
-            //capture time between
-            minI=current; //track minimum value 
+        if (current<maxI && increasingI){//方向改变，电流现在下降 - 在波形起始处
+            lastMaxI=maxI; //记录上一次最大值 
+            //记录两者之间的时间
+            minI=current; //跟踪最小值 
             increasingI=false;
             decreasingI=true;
             
-            //rms data
+            //RMS 数据
             total = total/count;
             rmsI = Math.sqrt(total);
             if (Double.isNaN(rmsI))
@@ -94,20 +94,20 @@ package com.lushprojects.circuitjs1.client;
             total=0;
             
         }
-        if (current<minI && decreasingI){ //I going down, track minimum value
+        if (current<minI && decreasingI){ //电流下降，跟踪最小值
             minI=current;
             increasingI=false;
             decreasingI=true;
         }
 
-        if (current>minI && decreasingI){ //change of direction I now going up
-            lastMinI=minI; //capture last minimum
+        if (current>minI && decreasingI){ //方向改变，电流现在上升
+            lastMinI=minI; //记录上一次最小值
 
             maxI = current;
             increasingI = true;
             decreasingI = false;
             
-            //rms data
+            //RMS 数据
             total = total/count;
             rmsI = Math.sqrt(total);
             if (Double.isNaN(rmsI))
@@ -117,7 +117,7 @@ package com.lushprojects.circuitjs1.client;
 
             
         }
-        //need to zero the rms value if it stays at 0 for a while
+        //如果 RMS 值持续一段时间为 0，需要将其清零
         if (current==0){
             zerocount++;
             if (zerocount > 5){
@@ -141,7 +141,7 @@ package com.lushprojects.circuitjs1.client;
     
     Polygon arrowPoly;
     void draw(Graphics g) {
-        super.draw(g);//BC required for highlighting
+        super.draw(g);//高亮显示需要 BC
         setVoltageColor(g, volts[0]);
         drawThickLine(g, point1, point2);
         g.fillPolygon(arrowPoly);

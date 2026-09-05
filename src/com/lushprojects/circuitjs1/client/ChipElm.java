@@ -88,7 +88,7 @@ abstract class ChipElm extends CircuitElm {
 		int fsz = 10*csize;
 		while (true) {
 		    int sw=(int)g.context.measureText(p.text).getWidth();
-		    // scale font down if it's too big
+		    // 如果字体太大就缩小字体
 		    if (sw > 10*csize) {
 			fsz -= 2;
 			Font f2 = new Font("SansSerif", 0, fsz);
@@ -152,7 +152,7 @@ abstract class ChipElm extends CircuitElm {
 	    }
 	}
 	
-	// see if we can move pin to position xp, yp, and return the new position
+	// 检查是否可以将引脚移动到位置 xp、yp，并返回新位置
 	boolean getPinPos(int xp, int yp, int pin, int pos[]) {
 	    int x0 = x+cspc2; int y0 = y;
 	    int xr = x0-cspc;
@@ -193,7 +193,7 @@ abstract class ChipElm extends CircuitElm {
 	Point getPost(int n) {
 	    return pins[n].post;
 	}
-	abstract int getVoltageSourceCount(); // output count
+	abstract int getVoltageSourceCount(); // 输出数量
 	void setVoltageSource(int j, int vs) {
 	    int i;
 	    for (i = 0; i != getPostCount(); i++) {
@@ -366,7 +366,7 @@ abstract class ChipElm extends CircuitElm {
 		}
 	    }
 	    
-	    // convert position, side to a grid position (0=top left) so we can detect overlaps
+	    // 将位置和边转换为网格位置（0=左上角），以便检测重叠
 	    int toGrid(int p, int s) {
 		if (s == SIDE_N)
 		    return p;

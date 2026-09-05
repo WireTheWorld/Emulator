@@ -20,7 +20,7 @@
 package com.lushprojects.circuitjs1.client;
 
     class WireElm extends CircuitElm {
-	boolean hasWireInfo; // used in CirSim to calculate wire currents
+	boolean hasWireInfo; // 用于在 CirSim 中计算导线电流
 	
 	public WireElm(int xx, int yy) { super(xx, yy); }
 	public WireElm(int xa, int ya, int xb, int yb, int f,

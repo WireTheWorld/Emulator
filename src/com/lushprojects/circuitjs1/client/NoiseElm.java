@@ -27,7 +27,7 @@ package com.lushprojects.circuitjs1.client;
 	    waveform = WF_NOISE;
 	}
 	
-	// dump this class as a RailElm.  The 'n' dump type is still used in CirSim.createCe to read old files
+	// 将此类的转储（dump）当作 RailElm 处理。'n' 转储类型仍用于 CirSim.createCe 读取旧文件
 //	int getDumpType() { return 'n'; }
 	int getShortcut() { return 0; }
     }

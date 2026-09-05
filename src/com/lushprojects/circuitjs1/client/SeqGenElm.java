@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// contributed by Edward Calver
+// 由 Edward Calver 贡献
 
     class SeqGenElm extends ChipElm {
 	boolean hasReset() {return false;}
@@ -89,7 +89,7 @@ position++;
 	    return super.dump()+" "+data+" "+oneshot;
 	}
 	public EditInfo getEditInfo(int n) {
-	//My code
+	//我的代码
 	    if (n == 0) {
 		EditInfo ei = new EditInfo("", 0, -1, -1);
 		ei.checkbox = new Checkbox("Bit 0 set", (data&1) != 0);

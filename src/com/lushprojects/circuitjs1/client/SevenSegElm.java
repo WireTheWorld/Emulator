@@ -20,10 +20,10 @@
 package com.lushprojects.circuitjs1.client;
 
     class SevenSegElm extends ChipElm {
-	// base segment count not including decimal point or colon
+	// 基本段数，不包括小数点或冒号
 	int baseSegmentCount;
 	
-	// segment count including decimal point or colon
+	// 段数，包括小数点或冒号
 	int segmentCount;
 
 	int extraSegment;
@@ -34,7 +34,7 @@ package com.lushprojects.circuitjs1.client;
 	int pinCount;
 	int commonPin;
 	
-	// 1 = common cathode, -1 = common anode, 0 = no diodes
+	// 1 = 共阴极，-1 = 共阳极，0 = 无二极管
 	int diodeDirection;
 	
 	public SevenSegElm(int xx, int yy) {
@@ -77,7 +77,7 @@ package com.lushprojects.circuitjs1.client;
 	    } else
 		sizeX = 5;
 	    
-	    // make room for common/dp/colon pins
+	    // 为公共/小数点/冒号引脚留出空间
 	    if (pinCount > sizeY*2)
 		sizeY++;
 	    
@@ -86,7 +86,7 @@ package com.lushprojects.circuitjs1.client;
 	    for (i = 0; i != segmentPinsOnLeftSide; i++)
 		pins[i] = new Pin(i, SIDE_W, Character.toString((char)('a'+i)));
 	    
-	    // retain backward compatibility pin layout for old 7-segment setup, otherwise put pins on left and right side
+	    // 保留旧 7 段显示的向后兼容引脚布局，否则将引脚放在左右两侧
 	    boolean backwardCompatibility = (segmentCount == 7 && diodeDirection == 0 && extraSegment == ES_NONE);
 	    int s = (backwardCompatibility) ? 1 : 0;
 	    for (; i != segmentCount; i++)
@@ -113,7 +113,7 @@ package com.lushprojects.circuitjs1.client;
 	    Point p5 = new Point();
 	    Point p6 = new Point();
 	    double dn = Math.hypot(p1.x-p2.x, p1.y-p2.y);
-	    // from p1 to p2, calculate points 5 pixels from each end, 5 pixels offset from center of line on both sides
+	    // 从 p1 到 p2，计算距两端各 5 像素、并在线中心两侧各偏移 5 像素的点
 	    interpPoint2(p1, p2, p3, p4, 5/dn, 5); 
 	    interpPoint2(p1, p2, p5, p6, 1-5/dn, 5);
 	    g.context.moveTo(p1.x, p1.y);
@@ -136,7 +136,7 @@ package com.lushprojects.circuitjs1.client;
 	    g.context.fill();
 	}
 	static int display7[] = {
-		// x1, y1, x2, y2 for each segment
+		// 每个段的 x1、y1、x2、y2
 		0, 0, 2, 0,
 		2, 0, 2, 1,
 		2, 1, 2, 2,
@@ -214,7 +214,7 @@ package com.lushprojects.circuitjs1.client;
 	    g.setColor(Color.red);
 	    int spx = cspc*2;
 	    
-	    // make room for dp/colon
+	    // 为小数点/冒号留出空间
 	    if (extraSegment != ES_NONE)
 		spx = (int)(spx*.9);
 	    
@@ -229,7 +229,7 @@ package com.lushprojects.circuitjs1.client;
 	    for (step = 0; step != 2; step++)
 		for (i = 0; i != segmentCount; i++) {
 		    int i4 = i*4;
-		    // draw diagonal lines in first pass, so the other lines overlap
+		    // 第一遍先画斜线，以便其它线段覆盖其上
 		    boolean diag = (disp[i4] != disp[i4+2] && disp[i4+1] != disp[i4+3]);
 		    if (diag != (step == 0))
 			continue;
@@ -251,14 +251,14 @@ package com.lushprojects.circuitjs1.client;
 	
 	void calculateCurrent() {
 	    if (diodeDirection == 0) {
-		// no current
+		// 无电流
 		int i;
 		for (i = 0; i != pinCount; i++)
 		    pins[i].current = 0;
 		return;
 	    }
 	    
-	    // calculate diode currents
+	    // 计算二极管电流
 	    int i;
 	    pins[commonPin].current = 0;
 	    for (i = 0; i != segmentCount; i++) {
@@ -268,7 +268,7 @@ package com.lushprojects.circuitjs1.client;
 	}
 	
 	void stepFinished() {
-	    // stop for huge currents that make simulator act weird
+	    // 电流过大使模拟器行为异常时停止
 	    if (commonPin > 0 && Math.abs(pins[commonPin].current) > 1e12)
 		sim.stop("max current exceeded", this);
 	}
@@ -279,7 +279,7 @@ package com.lushprojects.circuitjs1.client;
 		       sim.printableCheckItem.getState() ? Color.white : darkred);
 		return;
 	    }
-	    // 10mA current = max brightness
+	    // 10mA 电流 = 最大亮度
 	    double w = -diodeDirection*pins[p].current / .01;
             if (w > 0)
                 w = 255*(1+.2*Math.log(w));

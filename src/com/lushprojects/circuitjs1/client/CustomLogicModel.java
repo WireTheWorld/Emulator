@@ -203,7 +203,7 @@ public class CustomLogicModel implements Editable {
 		    Window.alert("Error on line " + (i+1) + " of model description");
 		    return;
 		}
-		// if a letter appears twice, capitalize it the 2nd time so we can compare
+		// 如果一个字母出现两次,在第二次出现时将其大写,以便进行比较
 		if (used[x-'a']) {
 		    newRl += (char)(x + 'A' - 'a');
 		    continue;

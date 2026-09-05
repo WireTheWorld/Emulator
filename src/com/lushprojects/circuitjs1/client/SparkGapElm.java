@@ -108,7 +108,7 @@ class SparkGapElm extends CircuitElm {
 	arr[6] = "Vbreakdown = " + getUnitText(breakdown, "V");
     }
     public EditInfo getEditInfo(int n) {
-	// ohmString doesn't work here on linux
+	// 在 Linux 上 ohmString 在此处不生效
 	if (n == 0)
 	    return new EditInfo("On resistance (ohms)", onresistance, 0, 0);
 	if (n == 1)

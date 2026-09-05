@@ -26,7 +26,7 @@ class MemristorElm extends CircuitElm {
 	r_on = 100;
 	r_off = 160*r_on;
 	dopeWidth = 0;
-	totalWidth = 10e-9; // meters
+	totalWidth = 10e-9; // 米
 	mobility = 1e-10;   // m^2/sV
 	resistance = 100;
     }
@@ -69,7 +69,7 @@ class MemristorElm extends CircuitElm {
 	setPowerColor(g, true);
 	double segf = 1./segments;
 
-	// draw zigzag
+	// 绘制锯齿形
 	for (i = 0; i <= segments; i++) {
 	    int nx = (i & 1) == 0 ? 1 : -1;
 	    if (i == segments)

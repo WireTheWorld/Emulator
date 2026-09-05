@@ -46,7 +46,7 @@ class EditOptions implements Editable {
 	            ei.choice.add("Norsk bokmål");
 	            ei.choice.add("Polski");
 	            ei.choice.add("Português");
-	            ei.choice.add("\u0420\u0443\u0441\u0441\u043a\u0438\u0439"); // Russian 
+	            ei.choice.add("\u0420\u0443\u0441\u0441\u043a\u0438\u0439"); // 俄语 
 	            return ei;
 		}
 		
@@ -69,7 +69,7 @@ class EditOptions implements Editable {
 		if (n == 0 && ei.value > 0) {
 			sim.maxTimeStep = ei.value;
 
-			// if timestep changed manually, prompt before changing it again
+			// 如果时间步长被手动更改，在再次更改之前提示确认
 			AudioOutputElm.okToChangeTimeStep = false;
 		}
 		if (n == 1 && ei.value > 0)

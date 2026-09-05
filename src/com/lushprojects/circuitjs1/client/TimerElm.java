@@ -58,10 +58,10 @@ class TimerElm extends ChipElm {
     boolean hasGroundPin() { return (flags & FLAG_GROUND) != 0; }
     void stamp() {
 	ground = hasGroundPin() ? nodes[N_GND] : 0;
-	// stamp voltage divider to put ctl pin at 2/3 V
+	// 放置分压器，使 ctl 引脚电压为 2/3 V
 	sim.stampResistor(nodes[N_VIN], nodes[N_CTL],  5000);
 	sim.stampResistor(nodes[N_CTL], ground,        10000);
-	// discharge, output, and Vin pins change in doStep()
+	// 放电、输出和 Vin 引脚在 doStep() 中变化
 	sim.stampNonLinear(nodes[N_DIS]);
 	sim.stampNonLinear(nodes[N_OUT]);
 	sim.stampNonLinear(nodes[N_VIN]);
@@ -69,8 +69,8 @@ class TimerElm extends ChipElm {
 	    sim.stampNonLinear(nodes[N_GND]);
     }
     void calculateCurrent() {
-	// need current for V, discharge, control, ground; output current is
-	// calculated for us, and other pins have no current.
+	// 需要 V、放电、控制、接地引脚上的电流；输出电流由
+	// 系统计算，其他引脚没有电流。
 	pins[N_VIN].current = (volts[N_CTL]-volts[N_VIN])/5000;
 	double groundVolts = hasGroundPin() ? volts[N_GND] : 0;
 	pins[N_CTL].current = -(volts[N_CTL]-groundVolts)/10000 - pins[N_VIN].current;
@@ -87,28 +87,28 @@ class TimerElm extends ChipElm {
     boolean out;
     void startIteration() {
 	out = volts[N_OUT] > volts[N_VIN]/2;
-	// check comparators
+	// 检查比较器
 	if (volts[N_THRES] > volts[N_CTL])
 		out = false;
 	
-	// trigger overrides threshold
+	// 触发端优先于阈值端
 	if (volts[N_CTL]/2 > volts[N_TRIG])
 	    out = true;
 	
 	double groundVolts = hasGroundPin() ? volts[N_GND] : 0;
 	
-	// reset overrides trigger
+	// 复位端优先于触发端
 	if (hasReset() && volts[N_RST] < .7+groundVolts)
 	    out = false;
     }
     void doStep() {
-	// if output is low, discharge pin 0.  we use a small
-	// resistor because it's easier, and sometimes people tie
-	// the discharge pin to the trigger and threshold pins.
+	// 如果输出为低电平，放电引脚为 0。我们使用一个小
+	// 电阻，因为这样更简单，而且有时人们会把
+	// 放电引脚与触发端和阈值端连接起来。
 	if (!out)
 	    sim.stampResistor(nodes[N_DIS], ground, 10);
 	
-	// if output is high, connect Vin to output with a small resistor.  Otherwise connect output to ground.
+	// 如果输出为高电平，用小电阻将 Vin 连接到输出端；否则将输出端接地。
 	sim.stampResistor(out ? nodes[N_VIN] : ground, nodes[N_OUT], 1); 
     }
     int getPostCount() { return hasGroundPin() ? 8 : hasReset() ? 7 : 6; }

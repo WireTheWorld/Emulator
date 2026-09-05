@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.lushprojects</groupId>
+    <artifactId>circuitjs1</artifactId>
+    <version>2.4.2</version>
+    <packaging>war</packaging>
+    <name>CircuitJS1</name>
+    <description>Browser-based electronic circuit simulator (GWT port of Falstad's Java applet)</description>
+
+    <properties>
+        <gwt.version>2.7.0</gwt.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- GWT client library (compile only, not packaged) -->
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwt.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- GWT compiler/dev tools (compile only, not packaged) -->
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>${gwt.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- GWT server runtime, goes into WEB-INF/lib (matches original Eclipse build) -->
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <version>${gwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Servlet API for the web app descriptor -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- This project keeps its sources in src/ (Eclipse layout), not src/main/java -->
+        <sourceDirectory>src</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <!-- war/ is both the webapp root and the GWT output directory -->
+                    <warSourceDirectory>war</warSourceDirectory>
+                    <webXml>war/WEB-INF/web.xml</webXml>
+                </configuration>
+            </plugin>
+
+            <!--
+                GWT compilation.
+                IMPORTANT: GWT 2.7 must run on JDK 8. Use:
+                    JAVA_HOME=<jdk8> mvn gwt:compile
+                Output goes to war/circuitjs1/ (hostedWebapp), which is already gitignored.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwt.version}</version>
+                <configuration>
+                    <module>com.lushprojects.circuitjs1.circuitjs1</module>
+                    <!-- GWT outputs the module into war/circuitjs1/, same layout as the original Eclipse build.
+                         circuitjs.html (in war/) references circuitjs1/circuitjs1.nocache.js and the
+                         Electron app loads war/circuitjs.html directly. -->
+                    <webappDirectory>${project.basedir}/war</webappDirectory>
+                    <hostedWebapp>${project.basedir}/war</hostedWebapp>
+                    <runTarget>circuitjs.html</runTarget>
+                    <logLevel>INFO</logLevel>
+                    <style>OBFUSCATED</style>
+                    <!-- GWT 2.7 compiler max supported source level is 1.7 -->
+                    <sourceLevel>1.7</sourceLevel>
+                    <extraJvmArgs>-Xmx1024m</extraJvmArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -84,8 +84,8 @@ package com.lushprojects.circuitjs1.client;
 	void setPoints() {
 	    super.setPoints();
 
-	    // find the coordinates of the various points we need to draw
-	    // the JFET.
+	    // 找出绘制 JFET 所需的各个点的坐标
+	    // JFET。
 	    int hs2 = hs*dsign;
 	    src = newPointArray(3);
 	    drn = newPointArray(3);
@@ -126,7 +126,7 @@ package com.lushprojects.circuitjs1.client;
 	boolean showBulk() { return false; }
 
 	int getDumpType() { return 'j'; }
-	// these values are taken from Hayes+Horowitz p155
+	// 这些值取自 Hayes+Horowitz 第 155 页
 	double getDefaultThreshold() { return -4; }
 	double getDefaultBeta() { return .00125; }
 	double getBackwardCompatibilityBeta() { return getDefaultBeta(); }

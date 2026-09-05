@@ -40,8 +40,8 @@ class Polygon {
     public void addPoint(int x, int y) {
         if (npoints >= xpoints.length || npoints >= ypoints.length) {
             int newLength = npoints * 2;
-            // Make sure that newLength will be greater than MIN_LENGTH and
-            // aligned to the power of 2
+            // 确保 newLength 大于 MIN_LENGTH，并且
+            // 对齐到 2 的幂
             if (newLength < MIN_LENGTH) {
                 newLength = MIN_LENGTH;
             } else if ((newLength & (newLength - 1)) != 0) {

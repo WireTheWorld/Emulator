@@ -33,8 +33,8 @@ package com.lushprojects.circuitjs1.client;
 		createEuroGatePolygon();
 		linePoints = null;
 	    } else {
-		// 0-15 = top curve, 16 = right, 17-32=bottom curve,
-		// 33-37 = left curve
+		// 0-15 = 顶部曲线，16 = 右侧，17-32 = 底部曲线，
+		// 33-37 = 左侧曲线
 		Point triPoints[] = newPointArray(38);
 		if (this instanceof XorGateElm)
 		    linePoints = new Point[5];

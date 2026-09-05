@@ -5,6 +5,17 @@ war/circuitjs1/circuits/
 war/e-*.html
 war/WEB-INF/
 
+# Maven build output
+target/
+
+# IntelliJ IDEA (keep shared config, ignore personal)
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/runConfigurations/*
+!.idea/runConfigurations/
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

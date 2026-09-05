@@ -3,13 +3,13 @@ package com.lushprojects.circuitjs1.client;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Label;
 
-// values with sliders
+// 带滑块的数值
 public class Adjustable implements Command {
     CircuitElm elm;
     double minValue, maxValue;
     String sliderText;
     
-    // index of value in getEditInfo() list that this slider controls
+    // 该滑块控制的 getEditInfo() 列表中数值的索引
     int editItem;
     
     Label label;
@@ -23,7 +23,7 @@ public class Adjustable implements Command {
 	editItem = item;
     }
 
-    // undump
+    // 反序列化（undump）
     Adjustable(StringTokenizer st, CirSim sim) {
 	int e = new Integer(st.nextToken()).intValue();
 	if (e == -1)
@@ -49,7 +49,7 @@ public class Adjustable implements Command {
 
     void setSliderValue(double value) {
         int intValue = (int) ((value-minValue)*100/(maxValue-minValue));
-        settingValue = true; // don't recursively set value again in execute()
+        settingValue = true; // 在 execute() 中不要递归地再次设置数值
         slider.setValue(intValue);
         settingValue = false;
     }

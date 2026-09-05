@@ -19,13 +19,13 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// 0 = switch
-// 1 = switch end 1
-// 2 = switch end 2
+// 0 = 开关
+// 1 = 开关端 1
+// 2 = 开关端 2
 // ...
-// 3n   = coil
-// 3n+1 = coil
-// 3n+2 = end of coil resistor
+// 3n   = 线圈
+// 3n+1 = 线圈
+// 3n+2 = 线圈电阻末端
 
 class RelayElm extends CircuitElm {
     double inductance;
@@ -103,7 +103,7 @@ class RelayElm extends CircuitElm {
 	drawCoil(g, dsign*6, coilLeads[x], coilLeads[1-x],
 		 volts[nCoil1+x], volts[nCoil2-x]);
 
-	// draw lines
+	// 绘制引线
 	g.setColor(Color.darkGray);
 	for (i = 0; i != poleCount; i++) {
 	    if (i == 0)
@@ -120,7 +120,7 @@ class RelayElm extends CircuitElm {
 	for (p = 0; p != poleCount; p++) {
 	    int po = p*3;
 	    for (i = 0; i != 3; i++) {
-		// draw lead
+		// 绘制引线
 		setVoltageColor(g, volts[nSwitch0+po+i]);
 		drawThickLine(g, swposts[p][i], swpoles[p][i]);
 	    }
@@ -170,7 +170,7 @@ class RelayElm extends CircuitElm {
 	allocNodes();
 	openhs = -dsign*16;
 
-	// switch
+	// 开关
 	calcLeads(32);
 	swposts = new Point[poleCount][3];
 	swpoles = new Point[poleCount][3];
@@ -188,7 +188,7 @@ class RelayElm extends CircuitElm {
 	    interpPoint(point1, point2, swposts[i][2], 1, -openhs*3*i+openhs);
 	}
 
-	// coil
+	// 线圈
 	coilPosts = newPointArray(2);
 	coilLeads   = newPointArray(2);
 	ptSwitch = newPointArray(poleCount);
@@ -199,7 +199,7 @@ class RelayElm extends CircuitElm {
 	interpPoint(point1, point2, coilLeads[0], .5, openhs*2);
 	interpPoint(point1, point2, coilLeads[1], .5, openhs*3);
 
-	// lines
+	// 引线
 	lines = newPointArray(poleCount*2);
     }
     Point getPost(int n) {
@@ -219,9 +219,9 @@ class RelayElm extends CircuitElm {
     }
     double a1, a2, a3, a4;
     void stamp() {
-	// inductor from coil post 1 to internal node
+	// 电感：从线圈端子 1 到内部节点
 	ind.stamp(nodes[nCoil1], nodes[nCoil3]);
-	// resistor from internal node to coil post 2
+	// 电阻：从内部节点到线圈端子 2
 	sim.stampResistor(nodes[nCoil3], nodes[nCoil2], coilR);
 
 	int i;
@@ -231,7 +231,7 @@ class RelayElm extends CircuitElm {
     void startIteration() {
 	ind.startIteration(volts[nCoil1]-volts[nCoil3]);
 
-	// magic value to balance operate speed with reset speed semi-realistically
+	// 用于在吸合速度与释放速度之间进行半真实平衡的魔法值
 	double magic = 1.3;
 	double pmult = Math.sqrt(magic+1);
 	double p = coilCurrent*pmult/onCurrent;
@@ -249,7 +249,7 @@ class RelayElm extends CircuitElm {
 	//System.out.println("ind " + this + " " + current + " " + voltdiff);
     }
     	
-    // we need this to be able to change the matrix for each step
+    // 我们需要此方法，以便能在每一步更改矩阵
     boolean nonLinear() { return true; }
 
     void doStep() {
@@ -267,8 +267,8 @@ class RelayElm extends CircuitElm {
 	double voltdiff = volts[nCoil1]-volts[nCoil3];
 	coilCurrent = ind.calculateCurrent(voltdiff);
 
-	// actually this isn't correct, since there is a small amount
-	// of current through the switch when off
+	// 实际上这并不正确，因为开关断开时
+	// 仍会有少量电流流过
 	int p;
 	for (p = 0; p != poleCount; p++) {
 	    if (i_position == 2)

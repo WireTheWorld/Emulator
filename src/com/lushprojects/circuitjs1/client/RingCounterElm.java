@@ -66,7 +66,7 @@ package com.lushprojects.circuitjs1.client;
 	void execute() {
 	    int i;
 	    
-	    // if we just loaded then the volts[] array is likely to be all zeroes, which might force us to do a reset, so defer execution until the next iteration
+	    // 如果刚加载，volts[] 数组很可能全为零，这可能迫使执行复位，因此将执行推迟到下一次迭代
 	    if (justLoaded) {
 		justLoaded = false;
 		return;

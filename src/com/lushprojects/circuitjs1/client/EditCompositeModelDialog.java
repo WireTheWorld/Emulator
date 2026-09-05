@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
 
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -50,7 +48,6 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class EditCompositeModelDialog extends DialogBox implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, MouseOutHandler, MouseOverHandler {
 	
@@ -196,7 +193,7 @@ public class EditCompositeModelDialog extends DialogBox implements MouseDownHand
 				model.setName(CustomCompositeElm.lastModelName = name);
 			    }
 			    CirSim.theSim.updateModels();
-			    CirSim.theSim.needAnalyze(); // will get singular matrix if we don't do this
+			    CirSim.theSim.needAnalyze(); // 如果不这样做，将得到奇异矩阵
 			    closeDialog();
 			}
 		});
@@ -257,12 +254,12 @@ public class EditCompositeModelDialog extends DialogBox implements MouseDownHand
 	boolean dragging;
 	
 	public void onMouseOver(MouseOverEvent event) {
-	    // TODO Auto-generated method stub
+	    // TODO 自动生成的方法存根
 	    
 	}
 
 	public void onMouseOut(MouseOutEvent event) {
-	    // TODO Auto-generated method stub
+	    // TODO 自动生成的方法存根
 	    
 	}
 

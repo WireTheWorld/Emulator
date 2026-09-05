@@ -25,9 +25,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 
 class TransistorElm extends CircuitElm {
-	// node 0 = base
-	// node 1 = collector
-	// node 2 = emitter
+	// 节点 0 = 基极
+	// 节点 1 = 集电极
+	// 节点 2 = 发射极
 	int pnp;
 	double beta;
 //	double fgain, inv_fgain;
@@ -62,7 +62,7 @@ class TransistorElm extends CircuitElm {
 	}
 	void setup() {
 	    model = TransistorModel.getModelWithNameOrCopy(modelName, model);
-	    modelName = model.name;   // in case we couldn't find that model    
+	    modelName = model.name;   // 以防找不到该模型    
 	    vcrit = vt * Math.log(vt/(Math.sqrt(2)*model.satCur));
 	    noDiagonal = true;
 	}
@@ -95,28 +95,28 @@ class TransistorElm extends CircuitElm {
 	void draw(Graphics g) {
 	    setBbox(point1, point2, 16);
 	    setPowerColor(g, true);
-	    // draw collector
+	    // 绘制集电极
 	    setVoltageColor(g, volts[1]);
 	    drawThickLine(g, coll[0], coll[1]);
-	    // draw emitter
+	    // 绘制发射极
 	    setVoltageColor(g, volts[2]);
 	    drawThickLine(g, emit[0], emit[1]);
-	    // draw arrow
+	    // 绘制箭头
 	    g.setColor(lightGrayColor);
 	    g.fillPolygon(arrowPoly);
-	    // draw base
+	    // 绘制基极
 	    setVoltageColor(g, volts[0]);
 	    if (sim.powerCheckItem.getState())
 		g.setColor(Color.gray);
 	    drawThickLine(g, point1, base);
-	    // draw dots
+	    // 绘制电流点
 	    curcount_b = updateDotCount(-ib, curcount_b);
 	    drawDots(g, base, point1, curcount_b);
 	    curcount_c = updateDotCount(-ic, curcount_c);
 	    drawDots(g, coll[1], coll[0], curcount_c);
 	    curcount_e = updateDotCount(-ie, curcount_e);
 	    drawDots(g, emit[1], emit[0], curcount_e);
-	    // draw base rectangle
+	    // 绘制基极矩形
 	    setVoltageColor(g, volts[0]);
 	    setPowerColor(g, true);
 	    g.fillPolygon(rectPoly);
@@ -127,7 +127,7 @@ class TransistorElm extends CircuitElm {
 //		g.setFont(unitsFont);
 		int ds = sign(dx);
 		g.drawString("B", base.x-10*ds, base.y-5);
-		g.drawString("C", coll[0].x-3+9*ds, coll[0].y+4); // x+6 if ds=1, -12 if -1
+		g.drawString("C", coll[0].x-3+9*ds, coll[0].y+4); // 若 ds=1 则 x+6，若 ds=-1 则 -12
 		g.drawString("E", emit[0].x-3+9*ds, emit[0].y+4);
 	    }
 	    drawPosts(g);
@@ -148,23 +148,23 @@ class TransistorElm extends CircuitElm {
 	    if ((flags & FLAG_FLIP) != 0)
 		dsign = -dsign;
 	    int hs2 = hs*dsign*pnp;
-	    // calc collector, emitter posts
+	    // 计算集电极、发射极端点
 	    coll = newPointArray(2);
 	    emit = newPointArray(2);
 	    interpPoint2(point1, point2, coll[0], emit[0], 1, hs2);
-	    // calc rectangle edges
+	    // 计算矩形边缘
 	    rect = newPointArray(4);
 	    interpPoint2(point1, point2, rect[0], rect[1], 1-16/dn, hs);
 	    interpPoint2(point1, point2, rect[2], rect[3], 1-13/dn, hs);
-	    // calc points where collector/emitter leads contact rectangle
+	    // 计算集电极/发射极引线与矩形接触的点
 	    interpPoint2(point1, point2, coll[1], emit[1], 1-13/dn, 6*dsign*pnp);
-	    // calc point where base lead contacts rectangle
+	    // 计算基极引线与矩形接触的点
 	    base = new Point();
 	    interpPoint (point1, point2, base, 1-16/dn);
-	    // rectangle
+	    // 矩形
 	    rectPoly = createPolygon(rect[0], rect[2], rect[3], rect[1]);
 
-	    // arrow
+	    // 箭头
 	    if (pnp == 1)
 		arrowPoly = calcArrow(emit[1], emit[0], 8, 4);
 	    else {
@@ -174,7 +174,7 @@ class TransistorElm extends CircuitElm {
 	}
 	
 	static final double leakage = 1e-13; // 1e-6;
-	// Electron thermal voltage at SPICE's default temperature of 27 C (300.15 K):
+	// SPICE 默认温度 27 C (300.15 K) 下的电子热电压：
 	static final double vt = 0.025865;
 	double vcrit;
 	double lastvbc, lastvbe;
@@ -204,20 +204,20 @@ class TransistorElm extends CircuitElm {
 	    sim.stampNonLinear(nodes[2]);
 	}
 	void doStep() {
-	    double vbc = pnp*(volts[0]-volts[1]); // typically negative
-	    double vbe = pnp*(volts[0]-volts[2]); // typically positive
+	    double vbc = pnp*(volts[0]-volts[1]); // 通常为负
+	    double vbe = pnp*(volts[0]-volts[2]); // 通常为正
 	    if (Math.abs(vbc-lastvbc) > .01 || // .01
 		Math.abs(vbe-lastvbe) > .01)
 		sim.converged = false;
 
-	    // To prevent a possible singular matrix, put a tiny conductance in parallel
-	    // with each P-N junction.
+	    // 为防止可能出现的奇异矩阵，并联一个微小的电导
+	    // 与每个 P-N 结并联。
 //	    gmin = leakage * 0.01;
 	    gmin = 1e-12;
 	    
 	    if (sim.subIterations > 100) {
-		// if we have trouble converging, put a conductance in parallel with all P-N junctions.
-		// Gradually increase the conductance value for each iteration.
+		// 如果收敛遇到困难，就在所有 P-N 结上并联一个电导。
+		// 每次迭代逐渐增大该电导值。
 		gmin = Math.exp(-9*Math.log(10)*(1-sim.subIterations/300.));
 		if (gmin > .1)
 		    gmin = .1;
@@ -230,7 +230,7 @@ class TransistorElm extends CircuitElm {
 	    lastvbe = vbe;
 
             /*
-             *   dc model paramters (from Spice 3f5, bjtload.c)
+             *   直流模型参数（来自 Spice 3f5 的 bjtload.c）
              */
             double csat=model.satCur;
             double oik=model.invRollOffF;
@@ -285,7 +285,7 @@ class TransistorElm extends CircuitElm {
                 cbcn=gbcn*vbc;
             }
             /*
-             *   determine base charge terms
+             *   确定基区电荷项
              */
             double q1=1/(1-model.invEarlyVoltF*vbc-model.invEarlyVoltR*vbe);
             if(oik == 0 && oikr == 0) {
@@ -306,12 +306,12 @@ class TransistorElm extends CircuitElm {
             double cex=cbe;
             double gex=gbe;
             /*
-             *   determine dc incremental conductances
+             *   确定直流增量电导
              */
             cc=cc+(cex-cbc)/qb-cbc/model.betaR-cbcn;
             double cb=cbe/beta+cben+cbc/model.betaR+cbcn;
             
-            // get currents
+            // 获取电流
 	    ic = pnp*cc;
 	    ib = pnp*cb;
 	    ie = pnp*(-cc-cb);
@@ -332,8 +332,8 @@ class TransistorElm extends CircuitElm {
             double ceqbe=pnp * (cc + cb - vbe * (gm + go + gpi) + vbc * go);
             double ceqbc=pnp * (-cc + vbe * (gm + go) - vbc * (gmu + go));
 
-            // stamp matrix.
-	    // Node 0 is the base, node 1 the collector, node 2 the emitter.
+            // 填充矩阵。
+	    // 节点 0 是基极，节点 1 是集电极，节点 2 是发射极。
 	    sim.stampMatrix(nodes[1], nodes[1], gmu+go);
 	    sim.stampMatrix(nodes[1], nodes[0], -gmu+gm);
 	    sim.stampMatrix(nodes[1], nodes[2], -gm-go);
@@ -345,7 +345,7 @@ class TransistorElm extends CircuitElm {
 	    sim.stampMatrix(nodes[2], nodes[2], gpi+gm+go);
 
             /*
-             *  load current excitation vector (right side)
+             *  加载电流激励向量（右侧）
              */
 	    sim.stampRightSide(nodes[0], -ceqbe-ceqbc);
 	    sim.stampRightSide(nodes[1], ceqbc);
@@ -481,7 +481,7 @@ class TransistorElm extends CircuitElm {
 	        }
 	        if (n == 4) {
 	            if (model.readOnly) {
-	                // probably never reached
+	                // 可能永远不会执行到这里
 	                Window.alert(sim.LS("This model cannot be modified.  Change the model name to allow customization."));
 	                return;
 	            }
@@ -498,7 +498,7 @@ class TransistorElm extends CircuitElm {
 	}
 	
         void stepFinished() {
-            // stop for huge currents that make simulator act weird
+            // 当电流过大导致模拟器行为异常时停止
             if (Math.abs(ic) > 1e12 || Math.abs(ib) > 1e12)
                 sim.stop("max current exceeded", this);
         }

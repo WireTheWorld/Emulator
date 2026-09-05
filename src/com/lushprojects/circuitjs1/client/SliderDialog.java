@@ -30,8 +30,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.GwtEvent;
@@ -50,7 +48,7 @@ class SliderDialog extends DialogBox  {
 	NumberFormat noCommaFormat;
 
 	SliderDialog(CircuitElm ce, CirSim f) {
-		super(); // Do we need this?
+		super(); // 我们需要这个吗？
 		setText(CirSim.LS("Add Sliders"));
 		sim = f;
 		elm = ce;
@@ -101,7 +99,7 @@ class SliderDialog extends DialogBox  {
 			String name = CirSim.LS(ei.name);
 			idx = vp.getWidgetIndex(hp);
 
-			// remove HTML
+			// 移除 HTML
 			name = name.replaceAll("<[^>]*>", "");
 			ei.checkbox = new Checkbox(name, adj != null);
 			vp.insert(ei.checkbox, idx++);
@@ -177,7 +175,7 @@ class SliderDialog extends DialogBox  {
 		}
 	    }
 	    if (changed) {
-		// apply changes before we reset everything
+		// 在重置所有内容之前应用更改
 		apply();
 		
 		clearDialog();

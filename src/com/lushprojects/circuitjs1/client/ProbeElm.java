@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// much of this was adapted from Bill Collis's code in TestPointElm.java
+// 其中大部分改编自 TestPointElm.java 中 Bill Collis 的代码
 
 class ProbeElm extends CircuitElm {
     static final int FLAG_SHOWVOLTAGE = 1;
@@ -35,12 +35,12 @@ class ProbeElm extends CircuitElm {
     final int TP_FRQ = 6;
     final int TP_PER = 7;
     final int TP_PWI = 8;
-    final int TP_DUT = 9; //mark to space ratio
+    final int TP_DUT = 9; // 占空比(高电平与低电平之比)
     
     public ProbeElm(int xx, int yy) { super(xx, yy);
     	meter = TP_VOL;
     	
-    	// default for new elements
+    	// 新元件的默认设置
     	flags = FLAG_SHOWVOLTAGE;
     	scale = SCALE_AUTO;
     }
@@ -50,7 +50,7 @@ class ProbeElm extends CircuitElm {
     	meter = TP_VOL;
     	scale = SCALE_AUTO;
 	try {
-	    meter = Integer.parseInt(st.nextToken()); // get meter type from saved dump
+	    meter = Integer.parseInt(st.nextToken()); // 从保存的转储中获取仪表类型
 	    scale = Integer.parseInt(st.nextToken());
 	} catch (Exception e) {}
     }
@@ -85,7 +85,7 @@ class ProbeElm extends CircuitElm {
     }
     
     double rmsV=0, total, count;
-    double binaryLevel=0;//0 or 1 - double because we only pass doubles back to the web page
+    double binaryLevel=0;//0 或 1 - 用 double 是因为我们只向网页回传 double 类型
     int zerocount=0;
     double maxV=0, lastMaxV;
     double minV=0, lastMinV;
@@ -96,7 +96,7 @@ class ProbeElm extends CircuitElm {
     double selectedValue=0;
 
     boolean increasingV=true, decreasingV=true;
-    long periodStart, periodLength, pulseStart;//time between consecutive max values
+    long periodStart, periodLength, pulseStart;// 连续最大值之间的时间
 
     Point center;
 	
@@ -180,9 +180,9 @@ class ProbeElm extends CircuitElm {
     }
     
     void stepFinished(){
-        count++;//how many counts are in a cycle
+        count++;// 记录一个周期内计数的次数
         double v = getVoltageDiff();
-        total += v*v; //sum of squares
+        total += v*v; // 平方和
 
         if (v<2.5)
             binaryLevel = 0;
@@ -190,25 +190,25 @@ class ProbeElm extends CircuitElm {
             binaryLevel = 1;
         
         
-        //V going up, track maximum value with 
+        //V 上升,持续跟踪最大值 
         if (v>maxV && increasingV){
             maxV = v;
             increasingV = true;
             decreasingV = false;
         }
-        if (v<maxV && increasingV){//change of direction V now going down - at start of waveform
-            lastMaxV=maxV; //capture last maximum 
-            //capture time between
+        if (v<maxV && increasingV){// 方向改变,V 现在开始下降 - 位于波形起始处
+            lastMaxV=maxV; // 记录上一次最大值 
+            // 记录两次最大值之间的时间
             periodLength = System.currentTimeMillis() - periodStart;
             periodStart = System.currentTimeMillis();
             period = periodLength;
             pulseWidth = System.currentTimeMillis() - pulseStart;
             dutyCycle = pulseWidth / periodLength;
-            minV=v; //track minimum value with V
+            minV=v; // 随 V 跟踪最小值
             increasingV=false;
             decreasingV=true;
             
-            //rms data
+            //RMS 数据
             total = total/count;
             rmsV = Math.sqrt(total);
             if (Double.isNaN(rmsV))
@@ -217,20 +217,20 @@ class ProbeElm extends CircuitElm {
             total=0;
             
         }
-        if (v<minV && decreasingV){ //V going down, track minimum value with V
+        if (v<minV && decreasingV){ //V 下降,随 V 跟踪最小值
             minV=v;
             increasingV=false;
             decreasingV=true;
         }
 
-        if (v>minV && decreasingV){ //change of direction V now going up
-            lastMinV=minV; //capture last minimum
+        if (v>minV && decreasingV){ // 方向改变,V 现在开始上升
+            lastMinV=minV; // 记录上一次最小值
             pulseStart =  System.currentTimeMillis();
             maxV = v;
             increasingV = true;
             decreasingV = false;
             
-            //rms data
+            //RMS 数据
             total = total/count;
             rmsV = Math.sqrt(total);
             if (Double.isNaN(rmsV))
@@ -240,7 +240,7 @@ class ProbeElm extends CircuitElm {
 
             
         }
-        //need to zero the rms value if it stays at 0 for a while
+        // 如果 RMS 值在一段时间内保持为 0,则需要将其清零
         if (v==0){
             zerocount++;
             if (zerocount > 5){

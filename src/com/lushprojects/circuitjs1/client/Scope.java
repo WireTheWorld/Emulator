@@ -20,42 +20,39 @@
 package com.lushprojects.circuitjs1.client;
 
 import com.google.gwt.event.dom.client.MouseWheelEvent;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.storage.client.Storage;
 
 
 import java.util.Vector;
 
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.core.client.GWT;
 
-// plot of single value on a scope
+// 在示波器上绘制单个数值的曲线
 class ScopePlot {
     double minValues[], maxValues[];
     int scopePointCount;
-    int ptr; // ptr is pointer to the current sample
-    int value; // Value - the property being shown - e.g. VAL_CURRENT
-    // scopePlotSpeed is in sim timestep units per pixel
+    int ptr; // ptr 是指向当前采样点的指针
+    int value; // Value - 正在显示的属性 - 例如 VAL_CURRENT
+    // scopePlotSpeed 的单位是每个像素对应的仿真时间步长数
     int scopePlotSpeed, units;
     double lastUpdateTime;
     double lastValue;
     String color;
     CircuitElm elm;
-   // Has a manual scale in "/div" format been put in by the user (as opposed to being
-   // inferred from a "MaxValue" format or from an automatically calculated scale)?
-   // Manual scales should be kept to sane values anyway, but this shows if this is a user
-   // intention we should respect, or if we should try and populate reasonable values from
-   // the data we have
+   // 用户是否已输入 "/div" 格式的手动刻度（而不是从 "MaxValue" 格式
+   // 或自动计算的刻度推断而来）？
+   // 无论如何手动刻度都应保持合理的值，但这表明这是否是
+   // 我们应该尊重的用户意图，还是应该尝试从
+   // 已有数据中填充合理的值
     boolean manScaleSet = false; 
-    double manScale = 1.0; // Units per division
-    int manVPosition = 0; // 0 is center of screen. +V_POSITION_STEPS/2 is top of screen
+    double manScale = 1.0; // 每格单位数
+    int manVPosition = 0; // 0 表示屏幕中心。+V_POSITION_STEPS/2 表示屏幕顶部
     double gridMult;
     double plotOffset;
     boolean acCoupled = false;
-    double acAlpha = 0.9999; // Filter coefficient for AC coupling
-    double acLastOut = 0; // Store y[i-1] term for AC coupling filter
+    double acAlpha = 0.9999; // 交流耦合的滤波器系数
+    double acLastOut = 0; // 存储交流耦合滤波器的 y[i-1] 项
     
     final static int FLAG_AC=1;
     
@@ -69,7 +66,7 @@ class ScopePlot {
 	units = u;
 	value = v;
 	manScale = manS;
-	// I *think* all units other than V and A can only be positive, so for these move the v position to the bottom.
+	// 我*认为*除 V 和 A 之外的所有单位都只能是正数，因此对于这些单位，将 v 位置移到底部。
 	if (units > Scope.UNITS_A)
 	    manVPosition = -Scope.V_POSITION_STEPS/2;
     }
@@ -82,17 +79,17 @@ class ScopePlot {
 	int oldSpc = scopePointCount;
 	scopePointCount = spc;
 	if (scopePlotSpeed != sp)
-	    oldSpc = 0; // throw away old data
+	    oldSpc = 0; // 丢弃旧数据
 	scopePlotSpeed = sp;
-	// Adjust the time constant of the AC coupled filter in proportion to the number of samples
-	// we are seeing on the scope (if my maths is right). The constant is empirically determined
+	// 根据示波器上看到的采样数量成比例地调整交流耦合滤波器的时间常数
+	//（如果我的数学没有错的话）。该常数是通过经验确定的
 	acAlpha = 1.0-1.0/(1.15*scopePlotSpeed*scopePointCount);
 	double oldMin[] = minValues;
 	double oldMax[] = maxValues;
     	minValues = new double[scopePointCount];
     	maxValues = new double[scopePointCount];
     	if (oldMin != null && !full) {
-    	    // preserve old data if possible
+    	    // 尽可能保留旧数据
     	    int i;
     	    for (i = 0; i != scopePointCount && i != oldSpc; i++) {
     		int i1 = (-i) & (scopePointCount-1);
@@ -109,9 +106,9 @@ class ScopePlot {
 	if (elm == null)
 		return;
 	double v = elm.getScopeValue(value);
-	 // AC coupling filter. 1st order IIR high pass
+	 // 交流耦合滤波器。一阶 IIR 高通
 	 // y[i] = alpha x (y[i-1]+x[i]-x[i-1])
-	 // We calculate for all iterations (even DC coupled) to prime the data in case they switch to AC later
+	 // 我们对所有迭代都进行计算（即使是直流耦合），以便在以后切换到交流模式时为数据做好准备
 	double newAcOut=acAlpha*(acLastOut+v-lastValue);
 	lastValue = v;
 	acLastOut = newAcOut;
@@ -174,7 +171,7 @@ class ScopePlot {
     }
     
     boolean canAcCouple() {
-	return units == Scope.UNITS_V; // AC coupling is permitted if the plot is displaying volts
+	return units == Scope.UNITS_V; // 如果绘制的曲线显示的是电压，则允许交流耦合
     }
     
     boolean isAcCoupled() {
@@ -189,13 +186,13 @@ class ScopePlot {
 class Scope {
     final int FLAG_YELM = 32;
     
-    // bunch of other flags go here, see dump()
-    final int FLAG_IVALUE = 2048; // Flag to indicate if IVALUE is included in dump
-    final int FLAG_PLOTS = 4096; // new-style dump with multiple plots
-    final int FLAG_PERPLOTFLAGS = 1<< 18; // new-new style dump with plot flags
-    final int FLAG_PERPLOT_MAN_SCALE = 1<<19; // new-new style dump with manual included in each plot
+    // 其他一堆标志也放在这里，参见 dump()
+    final int FLAG_IVALUE = 2048; // 指示 dump 中是否包含 IVALUE 的标志
+    final int FLAG_PLOTS = 4096; // 新式 dump，包含多条曲线
+    final int FLAG_PERPLOTFLAGS = 1<< 18; // 新新式 dump，带每条曲线的标志
+    final int FLAG_PERPLOT_MAN_SCALE = 1<<19; // 新新式 dump，手动刻度包含在每条曲线中
     final int FLAG_MAN_SCALE = 16;
-    // other flags go here too, see dump()
+    // 其他标志也放在这里，参见 dump()
     
     static final int VAL_POWER = 7;
     static final int VAL_POWER_OLD = 1;
@@ -219,9 +216,9 @@ class Scope {
     int scopePointCount = 128;
     FFT fft;
     int position;
-    // speed is sim timestep units per pixel
+    // 速度是每像素对应的仿真时间步长数
     int speed;
-    int stackCount; // number of scopes in this column
+    int stackCount; // 这一列中示波器的数量
     String text;
     Rectangle rect;
     private boolean manualScale;
@@ -240,18 +237,18 @@ class Scope {
     Canvas imageCanvas;
     Context2d imageContext;
     int alphadiv =0;
-    // scopeTimeStep to check if sim timestep has changed from previous value when redrawing
+    // scopeTimeStep 用于在重绘时检查仿真时间步长是否与之前的值不同
     double scopeTimeStep;
-    double scale[]; // Max value to scale the display to show - indexed for each value of UNITS - e.g. UNITS_V, UNITS_A etc.
+    double scale[]; // 用于缩放显示的最大值 - 针对每个 UNITS 值建立索引 - 例如 UNITS_V、UNITS_A 等
     boolean reduceRange[];
-    double scaleX, scaleY;  // for X-Y plots
+    double scaleX, scaleY;  // 用于 X-Y 曲线
     int wheelDeltaY;
     int selectedPlot;
     ScopePropertiesDialog properties;
     String curColor, voltColor;
     double gridStepX, gridStepY;
     double maxValue, minValue;
-    int manDivisions = 8; // Number of vertical divisions when in manual mode
+    int manDivisions = 8; // 手动模式下垂直分格的数量
     boolean drawGridLines;
     boolean somethingSelected;
     
@@ -322,7 +319,7 @@ class Scope {
     
     void setManualScaleValue(int plotId, double d) {
 	if (plotId >= visiblePlots.size() )
-	    return; // Shouldn't happen, but just in case...
+	    return; // 不应该发生，但以防万一……
 	clear2dView();
 	visiblePlots.get(plotId).manScale=d;
 	visiblePlots.get(plotId).manScaleSet=true;
@@ -366,7 +363,7 @@ class Scope {
     	showFFT = false;
     	plot2d = false;
     	if (!loadDefaults()) {
-    	    // set showV and showI appropriately depending on what plots are present
+    	    // 根据存在的曲线来适当设置 showV 和 showI
     	    int i;
     	    for (i = 0; i != plots.size(); i++) {
     		ScopePlot plot = plots.get(i);
@@ -400,7 +397,7 @@ class Scope {
         		plot.assignColor(oc++);
         	    }
         	}
-	} else { // In 2D mode the visible plots are the first two plots
+	} else { // 在 2D 模式下，可见曲线是前两条曲线
 	    for(i =0; (i<2) && (i<plots.size()); i++) {
 		visiblePlots.add(plots.get(i));
 	    }
@@ -448,7 +445,7 @@ class Scope {
 	if (val == 0) {
 	    plots.add(new ScopePlot(ce, UNITS_V, VAL_VOLTAGE, getManScaleFromMaxScale(UNITS_V, false)));
 	    
-	    // create plot for current if applicable
+	    // 如果适用，则为电流创建曲线
 	    if (ce != null && !(ce instanceof OutputElm ||
 		    ce instanceof LogicOutputElm ||
 		    ce instanceof AudioOutputElm ||
@@ -506,8 +503,8 @@ class Scope {
 	return true;
     }
 
-    // returns true if we have a plot of voltage and nothing else (except current).
-    // The default case is a plot of voltage and current, so we're basically checking if that case is true. 
+    // 如果我们只有电压曲线而没有其他曲线（电流除外），则返回 true。
+    // 默认情况是电压和电流各一条曲线，所以我们基本上是在检查该情况是否成立。 
     boolean showingVoltageAndMaybeCurrent() {
 	int i;
 	boolean gotv = false;
@@ -537,7 +534,7 @@ class Scope {
 	calcVisiblePlots();
     }
 
-    // separate this scope's plots into separate scopes and return them in arr[pos], arr[pos+1], etc.  return new length of array.
+    // 将此示波器的曲线分离到单独的示波器中，并将它们返回到 arr[pos]、arr[pos+1] 等处。返回数组的新长度。
     int separate(Scope arr[], int pos) {
 	int i;
 	ScopePlot lastPlot = null;
@@ -566,7 +563,7 @@ class Scope {
 	}
     }
     
-    // called for each timestep
+    // 每一步时间步长都会调用
     void timeStep() {
 	int i;
 	for (i = 0; i != plots.size(); i++)
@@ -575,7 +572,7 @@ class Scope {
 	int x=0;
 	int y=0;
 	
-	// For 2d plots we draw here rather than in the drawing routine
+	// 对于 2D 曲线，我们在这里绘制而不是在绘制例程中绘制
     	if (plot2d && imageContext!=null && plots.size()>=2) {
     	    double v = plots.get(0).lastValue;
     	    double yval = plots.get(1).lastValue;
@@ -654,8 +651,8 @@ class Scope {
     */
     
     void setMaxScale(boolean s) {
-	// This procedure is added to set maxscale to an explicit value instead of just having a toggle
-	// We call the toggle procedure first because it has useful side-effects and then set the value explicitly.
+	// 添加此过程是为了将最大刻度设置为显式值，而不是仅仅进行切换
+	// 我们先调用切换过程，因为它有有用的副作用，然后再显式设置该值
 	maxScale();
 	maxScale = s;
     }
@@ -667,21 +664,21 @@ class Scope {
 	    scale[UNITS_A] *= x;
 	    scale[UNITS_OHMS] *= x;
 	    scale[UNITS_W] *= x;
-	    scaleX *= x; // For XY plots
+	    scaleX *= x; // 对于 XY 曲线
 	    scaleY *= x;
 	    return;
 	}
-	// toggle max scale.  This isn't on by default because, for the examples, we sometimes want two plots
-	// matched to the same scale so we can show one is larger.  Also, for some fast-moving scopes
-	// (like for AM detector), the amplitude varies over time but you can't see that if the scale is
-	// constantly adjusting.  It's also nice to set the default scale to hide noise and to avoid
-	// having the scale moving around a lot when a circuit starts up.
+	// 切换最大刻度。默认不开启，因为对于示例，我们有时希望两条曲线
+	// 匹配到相同的刻度，以便显示一条比另一条大。另外，对于一些快速变化的示波器
+	//（例如 AM 检波器），幅度会随时间变化，但如果刻度
+	// 不断调整，你就看不到这一点。设置默认刻度来隐藏噪声，并避免
+	// 在电路启动时刻度大幅移动，这也很不错。
 	maxScale = !maxScale;
 	showNegative = false;
     }
 
     void drawFFTVerticalGridLines(Graphics g) {
-      // Draw x-grid lines and label the frequencies in the FFT that they point to.
+      // 绘制 x 网格线，并标注 FFT 中它们所指向的频率。
       int prevEnd = 0;
       int divs = 20;
       double maxFrequency = 1 / (sim.maxTimeStep * speed * divs * 2);
@@ -711,8 +708,8 @@ class Scope {
       int ptr = plot.ptr;
       for (int i = 0; i < scopePointCount; i++) {
 	  int ii = (ptr - i + scopePointCount) & (scopePointCount - 1);
-	  // need to average max and min or else it could cause average of function to be > 0, which
-	  // produces spike at 0 Hz that hides rest of spectrum
+	  // 需要对最大值和最小值取平均，否则可能导致函数平均值 > 0，
+	  // 从而在 0 Hz 处产生尖峰，掩盖频谱的其余部分
 	  real[i] = .5*(maxV[ii]+minV[ii]);
 	  imag[i] = 0;
       }
@@ -730,8 +727,8 @@ class Scope {
 	  int y = (rect.height - 1) - 12;
 	  for (int i = 0; i < scopePointCount / 2; i++) {
 	      int x = 2 * i * rect.width / scopePointCount;
-	      // rect.width may be greater than or less than scopePointCount/2,
-	      // so x may be greater than or equal to prevX.
+	      // rect.width 可能大于或小于 scopePointCount/2，
+	      // 所以 x 可能大于或等于 prevX。
 	      double magnitude = fft.magnitude(real[i], imag[i]);
 	      int height = (int) ((magnitude * y) / maxM);
 	      if (x != prevX)
@@ -746,8 +743,8 @@ class Scope {
 	  double val0 = Math.log(scale[plot.units])*ymult;
 	  for (int i = 0; i < scopePointCount / 2; i++) {
 	      int x = 2 * i * rect.width / scopePointCount;
-	      // rect.width may be greater than or less than scopePointCount/2,
-	      // so x may be greater than or equal to prevX.
+	      // rect.width 可能大于或小于 scopePointCount/2，
+	      // 所以 x 可能大于或等于 prevX。
 	      double val = Math.log(fft.magnitude(real[i], imag[i]));
 	      int y = y0-(int) (val*ymult-val0);
 	      if (x != prevX)
@@ -808,7 +805,7 @@ class Scope {
 //    	g.drawImage(image, r.x, r.y, null);
     	g.setColor(CircuitElm.whiteColor);
     	g.fillOval(draw_ox-2, draw_oy-2, 5, 5);
-    	// Axis
+    	// 轴
     	g.setColor(CircuitElm.positiveColor);
     	g.drawLine(0, rect.height/2, rect.width-1, rect.height/2);
     	if (!plotXY)
@@ -879,7 +876,7 @@ class Scope {
 	if (plots.size() == 0)
 	    return;
     	
-    	// reset if timestep changed
+    	// 如果时间步长改变则重置
     	if (scopeTimeStep != sim.maxTimeStep) {
     	    scopeTimeStep = sim.maxTimeStep;
     	    resetGraph();
@@ -910,7 +907,7 @@ class Scope {
     	}
     	
     	int si;
-    	somethingSelected = false;  // is one of our plots selected?
+    	somethingSelected = false;  // 我们的曲线中有一条被选中吗？
     	
     	for (si = 0; si != visiblePlots.size(); si++) {
     	    ScopePlot plot = visiblePlots.get(si);
@@ -928,13 +925,13 @@ class Scope {
     	boolean allPlotsSameUnits = true;
     	for (i = 1; i < visiblePlots.size(); i++) {
     	    if (visiblePlots.get(i).units != visiblePlots.get(0).units)
-    		allPlotsSameUnits = false; // Don't draw horizontal grid lines unless all plots are in same units
+    		allPlotsSameUnits = false; // 除非所有曲线单位相同，否则不绘制水平网格线
     	}
     	
     	if ((allPlotsSameUnits || showMax || showMin) && visiblePlots.size() > 0)
     	    calcMaxAndMin(visiblePlots.firstElement().units);
     	
-    	// draw volt plots on top (last), then current plots underneath, then everything else
+    	// 先绘制电压曲线（最后绘制，位于最上面），然后绘制下方的电流曲线，最后绘制其他所有曲线
     	for (i = 0; i != visiblePlots.size(); i++) {
     	    if (visiblePlots.get(i).units > UNITS_A && i != selectedPlot)
     		drawPlot(g, visiblePlots.get(i), allPlotsSameUnits, false);
@@ -947,7 +944,7 @@ class Scope {
     	    if (visiblePlots.get(i).units == UNITS_V && i != selectedPlot)
     		drawPlot(g, visiblePlots.get(i), allPlotsSameUnits, false);
     	}
-    	// draw selection on top.  only works if selection chosen from scope
+    	// 在最上面绘制选中项。只有从示波器中选择时才会生效
     	if (selectedPlot >= 0 && selectedPlot < visiblePlots.size())
     	    drawPlot(g, visiblePlots.get(selectedPlot), allPlotsSameUnits, true);
     	
@@ -970,7 +967,7 @@ class Scope {
     }
 
     
-    // calculate maximum and minimum values for all plots of given units
+    // 计算给定单位的所有曲线的最大值和最小值
     void calcMaxAndMin(int units) {
 	maxValue = -1e8;
 	minValue = 1e8;
@@ -993,7 +990,7 @@ class Scope {
         }
     }
     
-    // adjust scale of a plot
+    // 调整曲线的刻度
     void calcPlotScale(ScopePlot plot) {
 	if (manualScale)
 	    return;
@@ -1010,11 +1007,11 @@ class Scope {
     	    if (minV[ip] < -max)
     		max = -minV[ip];
     	}
-    	// scale fixed at maximum?
+    	// 刻度固定在最大值？
     	if (maxScale)
     	    gridMax = Math.max(max, gridMax);
     	else
-    	    // adjust in powers of two
+    	    // 按二次幂调整
     	    while (max > gridMax)
     		gridMax *= 2;
     	scale[plot.units] = gridMax;
@@ -1061,18 +1058,18 @@ class Scope {
     	double gridMax;
     	
     	
-    	// Calculate the max value (positive) to show and the value at the mid point of the grid
+    	// 计算要显示的最大值（正值）以及网格中点的值
     	if (!isManualScale()) {
     	    	gridMax = scale[plot.units];
     	    	gridMid = 0;
     	    	positionOffset = 0;
         	if (allPlotsSameUnits) {
-        	    // if we don't have overlapping scopes of different units, we can move zero around.
-        	    // Put it at the bottom if the scope is never negative.
+        	    // 如果我们没有不同单位重叠的示波器，就可以移动零点。
+        	    // 如果示波器从不为负，就把它放在底部。
         	    double mx = gridMax;
         	    double mn = 0;
         	    if (maxScale) {
-        		// scale is maxed out, so fix boundaries of scope at maximum and minimum. 
+        		// 刻度已到极限，因此将示波器边界固定在最大值和最小值。 
         		mx = maxValue;
         		mn = minValue;
         	    } else if (showNegative || minValue < (mx+mn)*.5 - (mx-mn)*.55) {
@@ -1080,7 +1077,7 @@ class Scope {
         		showNegative = true;
         	    }
         	    gridMid = (mx+mn)*.5;
-        	    gridMax = (mx-mn)*.55;  // leave space at top and bottom
+        	    gridMax = (mx-mn)*.55;  // 在顶部和底部留出空间
         	}
     	} else {
     	    gridMid =0;
@@ -1110,15 +1107,15 @@ class Scope {
     	    curColor = "#A0A000";
     	}
     	
-    	// Vertical (T) gridlines
+    	// 垂直 (T) 网格线
     	double ts = sim.maxTimeStep*speed;
     	gridStepX = calcGridStepX();
 
     	if (drawGridLines) {
-    	    // horizontal gridlines
+    	    // 水平网格线
     	    
-    	    // don't show hgridlines if lines are too close together (except for center line)
-    	    boolean showHGridLines = (gridStepY != 0) && (isManualScale() || allPlotsSameUnits); // Will only show center line if we have mixed units
+    	    // 如果线条太密，则不显示水平网格线（中心线除外）
+    	    boolean showHGridLines = (gridStepY != 0) && (isManualScale() || allPlotsSameUnits); // 如果我们有混合单位，将只显示中心线
     	    for (int ll = -100; ll <= 100; ll++) {
     		if (ll != 0 && !showHGridLines)
     		    continue;
@@ -1130,7 +1127,7 @@ class Scope {
     		g.drawLine(0,yl,rect.width-1,yl);
     	    }
     	    
-    	    // vertical gridlines
+    	    // 垂直网格线
     	    double tstart = sim.t-sim.maxTimeStep*speed*rect.width;
     	    double tx = sim.t-(sim.t % gridStepX);
 
@@ -1153,7 +1150,7 @@ class Scope {
     	    }
     	}
     	
-    	// only need gridlines drawn once
+    	// 网格线只需要绘制一次
     	drawGridLines = false;
 
         g.setColor(color);
@@ -1171,10 +1168,10 @@ class Scope {
             int maxvy = (int) (plot.gridMult*(maxV[ip]+plot.plotOffset));
             if (minvy <= maxy) {
         	if (minvy < minRangeLo || maxvy > minRangeHi) {
-        	    // we got a value outside min range, so we don't need to rescale later
+        	    // 我们得到的值超出了最小范围，所以之后不需要重新缩放
         	    reduceRange[plot.units] = false;
         	    minRangeLo = -1000;
-        	    minRangeHi = 1000; // avoid triggering this test again
+        	    minRangeHi = 1000; // 避免再次触发此测试
         	}
         	if (ox != -1) {
         	    if (minvy == oy && maxvy == oy)
@@ -1191,11 +1188,11 @@ class Scope {
             }
         } // for (i=0...)
         if (ox != -1)
-            g.drawLine(ox, maxy-oy, x+i-1, maxy-oy); // Horizontal
+            g.drawLine(ox, maxy-oy, x+i-1, maxy-oy); // 水平
         
     }
 
-    // find selected plot
+    // 查找选中的曲线
     void checkForSelection() {
 	if (sim.dialogIsShowing())
 	    return;
@@ -1286,10 +1283,10 @@ class Scope {
 	return (plot.units == Scope.UNITS_V || plot.units == Scope.UNITS_A);
     }
     
-    // calc RMS and display it
+    // 计算 RMS 并显示它
     void drawRMS(Graphics g) {
 	if (!canShowRMS()) {
-	    // needed for backward compatibility
+	    // 为了向后兼容需要
 	    showRMS = false;
 	    showAverage = true;
 	    drawAverage(g);
@@ -1304,7 +1301,7 @@ class Scope {
     	double mid = (maxValue+minValue)/2;
 	int state = -1;
 	
-	// skip zeroes
+	// 跳过零值
 	for (i = 0; i != rect.width; i++) {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    if (maxV[ip] != 0) {
@@ -1322,7 +1319,7 @@ class Scope {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    boolean sw = false;
 	    
-	    // switching polarity?
+	    // 极性切换？
 	    if (state == 1) {
 		if (maxV[ip] < mid)
 		    sw = true;
@@ -1332,7 +1329,7 @@ class Scope {
 	    if (sw) {
 		state = -state;
 		
-		// completed a full cycle?
+		// 完成了一个完整周期？
 		if (firstState == state) {
 		    if (waveCount == 0) {
 			start = i;
@@ -1406,7 +1403,7 @@ class Scope {
     	double mid = (maxValue+minValue)/2;
 	int state = -1;
 	
-	// skip zeroes
+	// 跳过零值
 	for (i = 0; i != rect.width; i++) {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    if (maxV[ip] != 0) {
@@ -1424,7 +1421,7 @@ class Scope {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    boolean sw = false;
 	    
-	    // switching polarity?
+	    // 极性切换？
 	    if (state == 1) {
 		if (maxV[ip] < mid)
 		    sw = true;
@@ -1434,7 +1431,7 @@ class Scope {
 	    if (sw) {
 		state = -state;
 		
-		// completed a full cycle?
+		// 完成了一个完整周期？
 		if (firstState == state) {
 		    if (waveCount == 0) {
 			start = i;
@@ -1466,7 +1463,7 @@ class Scope {
     	double mid = (maxValue+minValue)/2;
 	int state = -1;
 	
-	// skip zeroes
+	// 跳过零值
 	for (i = 0; i != rect.width; i++) {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    if (maxV[ip] != 0) {
@@ -1485,7 +1482,7 @@ class Scope {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    boolean sw = false;
 	    
-	    // switching polarity?
+	    // 极性切换？
 	    if (state == 1) {
 		if (maxV[ip] < mid)
 		    sw = true;
@@ -1495,7 +1492,7 @@ class Scope {
 	    if (sw) {
 		state = -state;
 		
-		// completed a full cycle?
+		// 完成了一个完整周期？
 		if (firstState == state) {
 		    if (waveCount == 0) {
 			start = end = i;
@@ -1515,10 +1512,10 @@ class Scope {
 	}
     }
 
-    // calc frequency if possible and display it
+    // 如果可能，计算频率并显示它
     void drawFrequency(Graphics g) {
-	// try to get frequency
-	// get average
+	// 尝试获取频率
+	// 获取平均值
 	double avg = 0;
 	int i;
 	ScopePlot plot = visiblePlots.firstElement();
@@ -1536,7 +1533,7 @@ class Scope {
 	double avperiod = 0;
 	int periodct = -1;
 	double avperiod2 = 0;
-	// count period lengths
+	// 统计周期长度
 	for (i = 0; i != rect.width; i++) {
 	    int ip = (i+ipa) & (scopePointCount-1);
 	    double q = maxV[ip]-avg;
@@ -1548,10 +1545,10 @@ class Scope {
 	    if (state == 2 && os == 1) {
 		int pd = i-oi;
 		oi = i;
-		// short periods can't be counted properly
+		// 短周期无法正确计数
 		if (pd < 12)
 		    continue;
-		// skip first period, it might be too short
+		// 跳过第一个周期，它可能太短
 		if (periodct >= 0) {
 		    avperiod += pd;
 		    avperiod2 += pd*pd;
@@ -1563,7 +1560,7 @@ class Scope {
 	avperiod2 /= periodct;
 	double periodstd = Math.sqrt(avperiod2-avperiod*avperiod);
 	double freq = 1/(avperiod*sim.maxTimeStep*speed);
-	// don't show freq if standard deviation is too great
+	// 如果标准差太大，则不显示频率
 	if (periodct < 1 || periodstd > 2)
 	    freq = 0;
 	// System.out.println(freq + " " + periodstd + " " + periodct);
@@ -1591,7 +1588,7 @@ class Scope {
     	    ScopePlot p = plots.get(i);
     	  //  if (i > 0)
     		x += " " + sim.locateElm(p.elm) + " " + p.value;
-    	    // dump scale if units are not V or A
+    	    // 如果单位不是 V 或 A，则转储刻度
     	    if (p.units > UNITS_A)
     		x += " " + scale[p.units];
     	}
@@ -1622,11 +1619,11 @@ class Scope {
     }
 
     String getScopeText() {
-	// stacked scopes?  don't show text
+	// 堆叠的示波器？不显示文本
 	if (stackCount != 1)
 	    return null;
 	
-	// multiple elms?  don't show text (unless one is selected)
+	// 多个元件？不显示文本（除非其中一个被选中）
 	if (selectedPlot < 0 && getSingleElm() == null)
 	    return null;
 	
@@ -1682,7 +1679,7 @@ class Scope {
 	visiblePlots.get(plot).manVPosition = v;
     }
 	
-    // get scope element, returning null if there's more than one
+    // 获取示波器元件，如果多于一个则返回 null
     CircuitElm getSingleElm() {
 	CircuitElm elm = plots.get(0).elm;
 	int i;
@@ -1708,9 +1705,9 @@ class Scope {
 
     int getFlags() {
     	int flags = (showI ? 1 : 0) | (showV ? 2 : 0) |
-			(showMax ? 0 : 4) |   // showMax used to be always on
+			(showMax ? 0 : 4) |   // showMax 过去总是开启
 			(showFreq ? 8 : 0) |
-			// In this version we always dump manual settings using the PERPLOT format
+			// 在这个版本中，我们总是使用 PERPLOT 格式转储手动设置
 			(isManualScale() ? (FLAG_MAN_SCALE | FLAG_PERPLOT_MAN_SCALE): 0) |
 			(plot2d ? 64 : 0) |
 			(plotXY ? 128 : 0) | (showMin ? 256 : 0) | (showScale? 512:0) |
@@ -1723,8 +1720,8 @@ class Scope {
 	    allPlotFlags |= p.getPlotFlags();
 	
 	}
-	// If none of our plots has a flag set we will use the old format with no plot flags, or
-	// else we will set FLAG_PLOTFLAGS and include flags in all plots
+	// 如果我们的曲线中没有任何一条设置了标志，我们将使用不带曲线标志的旧格式，
+	// 否则我们将设置 FLAG_PLOTFLAGS 并在所有曲线中包含标志
 	flags |= (allPlotFlags !=0) ? FLAG_PERPLOTFLAGS :0; // (1<<18)
 	return flags;
     }
@@ -1750,13 +1747,13 @@ class Scope {
     	for (i = 0; i < plots.size(); i++) {
     	    ScopePlot p = plots.get(i);
     	    if ((flags & FLAG_PERPLOTFLAGS) !=0)
-    		x += " " + Integer.toHexString(p.getPlotFlags()); // NB always export in Hex (no prefix)
+    		x += " " + Integer.toHexString(p.getPlotFlags()); // 注意：总是以十六进制导出（无前缀）
     	    if (i > 0)
     		x += " " + sim.locateElm(p.elm) + " " + p.value;
-    	    // dump scale if units are not V or A
+    	    // 如果单位不是 V 或 A，则转储刻度
     	    if (p.units > UNITS_A)
     		x += " " + scale[p.units];
-    	    if (isManualScale()) {// In this version we always dump manual settings using the PERPLOT format
+    	    if (isManualScale()) {// 在这个版本中，我们总是使用 PERPLOT 格式转储手动设置
     	        x += " " + p.manScale + " "  
     		+ p.manVPosition;
     	    }
@@ -1776,7 +1773,7 @@ class Scope {
     	speed = new Integer(st.nextToken()).intValue();
     	int value = new Integer(st.nextToken()).intValue();
     	
-    	// fix old value for VAL_POWER which doesn't work for transistors (because it's the same as VAL_IB) 
+    	// 修复 VAL_POWER 的旧值，它不适用于晶体管（因为它与 VAL_IB 相同） 
     	if (!(ce instanceof TransistorElm) && value == VAL_POWER_OLD)
     	    value = VAL_POWER;
     	
@@ -1794,7 +1791,7 @@ class Scope {
     	boolean plot2dFlag = (flags & 64) != 0;
     	boolean hasPlotFlags = (flags & FLAG_PERPLOTFLAGS) != 0;
     	if ((flags & FLAG_PLOTS) != 0) {
-    	    // new-style dump
+    	    // 新式转储
     	    try {
     		position = Integer.parseInt(st.nextToken());
     		int sz = Integer.parseInt(st.nextToken());
@@ -1803,7 +1800,7 @@ class Scope {
 		if (u > UNITS_A)
 		    scale[u] = Double.parseDouble(st.nextToken());
     		setValue(value);
-    		// setValue(0) creates an extra plot for current, so remove that
+    		// setValue(0) 会为电流创建一条额外曲线，所以移除它
     		while (plots.size() > 1)
     		    plots.removeElementAt(1);
 
@@ -1811,7 +1808,7 @@ class Scope {
     		int plotFlags = 0;
     		for (i = 0; i != sz; i++) {
     		    if (hasPlotFlags)
-    			plotFlags=Integer.parseInt(st.nextToken(), 16); // Import in hex (no prefix)
+    			plotFlags=Integer.parseInt(st.nextToken(), 16); // 以十六进制导入（无前缀）
     		    if (i!=0) {
         		    int ne = Integer.parseInt(st.nextToken());
         		    int val = Integer.parseInt(st.nextToken());
@@ -1838,7 +1835,7 @@ class Scope {
     	    } catch (Exception ee) {
     	    }
     	} else {
-    	    // old-style dump
+    	    // 旧式转储
     	    CircuitElm yElm = null;
     	    int ivalue = 0;
     	    try {
@@ -1848,7 +1845,7 @@ class Scope {
     		    ye = new Integer(st.nextToken()).intValue();
     		    if (ye != -1)
     			yElm = sim.getElm(ye);
-    		    // sinediode.txt has yElm set to something even though there's no xy plot...?
+    		    // sinediode.txt 中即使没有 xy 曲线，yElm 也被设置为某个值……？
     		    if (!plot2dFlag)
     			yElm = null;
     		}
@@ -1895,7 +1892,7 @@ class Scope {
 	ScopePlot vPlot = plots.get(0);
     	int flags = getFlags();
     	
-    	// store current scope settings as default.  1 is a version code
+    	// 将当前示波器设置保存为默认值。1 是版本代码
     	stor.setItem("scopeDefaults", "1 " + flags + " " + vPlot.scopePlotSpeed);
     	CirSim.console("saved defaults " + flags);
     }
@@ -2020,7 +2017,7 @@ class Scope {
     		return;
     	    e = firstE = -1;
     	}
-    	// not reached
+    	// 不会到达此处
     }
     
     void onMouseWheel(MouseWheelEvent e) {
@@ -2080,9 +2077,9 @@ class Scope {
     }
     
     public double getManScaleFromMaxScale(int units, boolean roundUp) {
-	// When the user manually switches to manual scale (and we don't already have a setting) then
-	// call with "roundUp=true" to get a "sensible" suggestion for the scale. When importing from
-	// a legacy file then call with "roundUp=false" to stay as close as possible to the old presentation
+	// 当用户手动切换到手动刻度（且我们还没有设置）时，以 "roundUp=true" 调用，
+	// 以获得一个"合理"的刻度建议。当从旧文件导入时，以 "roundUp=false" 调用，
+	// 以尽可能保持旧的表现形式
 	double s =scale[units];
 	if ( units > UNITS_A)
 	    s = 0.5*s;
@@ -2093,8 +2090,8 @@ class Scope {
     }
     
     static String exportAsDecOrHex(int v, int thresh) {
-	// If v>=thresh then export as hex value prefixed by "x", else export as decimal
-	// Allows flags to be exported as dec if in an old value (for compatibility) or in hex if new value
+	// 如果 v>=thresh，则导出为以 "x" 为前缀的十六进制值，否则导出为十进制
+	// 允许标志在旧值中导出为十进制（为了兼容性），在新值中导出为十六进制
 	if (v>=thresh)
 	    return "x"+Integer.toHexString(v);
 	else

@@ -1,12 +1,11 @@
-# Contributing to Circuitjs1
-## Raising issues
-Please feel free to add issues for feature requests or bug reports. We do work on this in our spare time, for free, so the issues
-that get processed tend to be the ones that are of most interest to us or scratch itches that we share.
-### Labeling issues
-Please start your issue titles with "Bug-" for bug reports or "Feature-" for feature requests.
+# 为 Circuitjs1 做贡献
+## 提交问题
+请随时为功能请求或 Bug 报告添加问题。我们是在业余时间免费做这项工作的，因此被处理的问题往往是那些我们最感兴趣或切中我们共同痛点的问题。
+### 给问题添加标签
+请以 "Bug-" 开头你的问题标题表示 Bug 报告，或以 "Feature-" 开头表示功能请求。
 
-Please only include one item in each issue (ie don't say "I would like this feature, and THIS feature and THAT feature" in one issue).
+请在每个问题中只包含一个事项（即不要在一个问题中说“我想要这个功能，还有这个功能和那个功能”）。
 
-For bug reports please include an example circuit (or a link to one) that exhibits the bug and the steps to reproduce the bug.
+对于 Bug 报告，请包含一个能重现 Bug 的示例电路（或指向它的链接）以及重现该 Bug 的步骤。
 
-For feature requests please explain why you would find this feature useful - what new work-flow would it support or what type of application would it assist with.
+对于功能请求，请解释为什么你认为该功能有用——它会支持什么样的新工作流程，或有助于哪种类型的应用程序。

@@ -31,7 +31,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
@@ -69,11 +68,11 @@ public class ExportAsUrlDialog extends DialogBox {
 				}
 
 				public void onResponseReceived(Request request, Response response) {
-					// processing goes here
+					// 在此处进行处理
 					if (response.getStatusCode()==Response.SC_OK) {
 					String text = response.getText();
 					textArea.setText(text);
-					// end or processing
+					// 处理结束
 					}
 					else  {
 						String text="Shortner error:"+response.getStatusText();

@@ -34,11 +34,11 @@ class LabeledNodeElm extends CircuitElm {
 	super(xa, ya, xb, yb, f);
 	text = st.nextToken();
 	if ((flags & FLAG_ESCAPE) == 0) {
-	    // old-style dump before escape/unescape
+	    // 转义/反转义之前的旧式导出
 	    while (st.hasMoreTokens())
 		text += ' ' + st.nextToken();
 	} else {
-	    // new-style dump
+	    // 新式导出
 	    text = CustomLogicModel.unescape(text); 
 	}
     }
@@ -68,7 +68,7 @@ class LabeledNodeElm extends CircuitElm {
     void setNode(int p, int n) {
 	super.setNode(p, n);
 	if (p == 1) {
-	    // assign new node
+	    // 分配新节点
 	    nodeList.put(text, new Integer(n));
 	    nodeNumber = n;
 	}
@@ -77,11 +77,11 @@ class LabeledNodeElm extends CircuitElm {
     int getDumpType() { return 207; }
     int getPostCount() { return 1; }
     
-    // this is basically a wire, since it just connects two nodes together
+    // 这基本上就是一根导线，因为它只是连接两个节点
     boolean isWire() { return true; }
     
-    // get connection node (which is the same as regular nodes for all elements but this one).
-    // node 0 is the terminal, node 1 is the internal node shared by all nodes with same name
+    // 获取连接节点（对所有元件来说都与常规节点相同，但这个除外）。
+    // 节点 0 是端子，节点 1 是所有同名节点共享的内部节点
     int getConnectionNode(int n) {
 	if (n == 0)
 	    return nodes[0];
@@ -90,19 +90,19 @@ class LabeledNodeElm extends CircuitElm {
     int getConnectionNodeCount() { return 2; }
     
     int getInternalNodeCount() {
-	// this can happen at startup
+	// 这在启动时可能发生
 	if (nodeList == null)
 	    return 0;
 
 	Integer nn = nodeList.get(text);
 
-	// node assigned already?
+	// 节点已经分配了？
 	if (nn != null) {
 	    nodeNumber = nn.intValue();
 	    return 0;
 	}
 
-	// allocate a new one
+	// 分配一个新的
 	return 1;
     }
     void draw(Graphics g) {

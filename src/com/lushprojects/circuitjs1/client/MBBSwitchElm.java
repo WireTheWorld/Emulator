@@ -66,7 +66,7 @@ package com.lushprojects.circuitjs1.client;
 		interpPoint(point1, point2, swposts[i], 1, hs);
 	    }
 	    
-	    // 4 positions (pole 1, both, pole 2, both)
+	    // 4 个位置（触点 1、两者、触点 2、两者）
 	    posCount = 4;
 	}
 	
@@ -75,18 +75,18 @@ package com.lushprojects.circuitjs1.client;
 	    setBbox(point1, point2, openhs);
 	    adjustBbox(swposts[0], swposts[1]);
 
-	    // draw first lead
+	    // 绘制第一根引线
 	    setVoltageColor(g, volts[0]);
 	    drawThickLine(g, point1, lead1);
 
-	    // draw other leads
+	    // 绘制其他引线
 	    int i;
 	    for (i = 0; i != 2; i++) {
 		setVoltageColor(g, volts[i+1]);
 		drawThickLine(g, swpoles[i], swposts[i]);
 	    }
 	    
-	    // draw switch
+	    // 绘制开关
 	    if (!needsHighlight())
 		g.setColor(whiteColor);
 	    if (both || position == 0)
@@ -94,7 +94,7 @@ package com.lushprojects.circuitjs1.client;
 	    if (both || position == 2)
 		drawThickLine(g, lead1, swpoles[1]);
 
-	    // draw current
+	    // 绘制电流
 	    for (i = 0; i != 2; i++) {
 		curcounts[i] = updateDotCount(currents[i], curcounts[i]);
 		drawDots(g, swpoles[i], swposts[i], curcounts[i]);
@@ -121,14 +121,14 @@ package com.lushprojects.circuitjs1.client;
 	int getPostCount() { return 3; }
 	
 	void setCurrent(int vn, double c) {
-	    // set current for voltage source vn to c
+	    // 将电压源 vn 的电流设置为 c
 	    if (vn == voltSources[0])
 		currents[both ? 0 : position/2] = c;
 	    else if (vn == voltSources[1])
 		currents[1] = c;
 	}
 	void calculateCurrent() {
-	    // make sure current of unconnected pole is zero
+	    // 确保未连接触点的电流为零
 	    if (!both)
 		currents[1-(position/2)] = 0;
 	}
@@ -143,8 +143,8 @@ package com.lushprojects.circuitjs1.client;
 		sim.stampVoltageSource(nodes[0], nodes[2], voltSources[vs++], 0);
 	}
 	
-	// connection is implemented by voltage source with voltage = 0.
-	// need two for both loads connected, otherwise one.
+	// 连接通过电压为 0 的电压源实现。
+	// 两个负载都连接时需要两个电压源，否则只需要一个。
 	int getVoltageSourceCount() {
 	    both = (position == 1 || position == 3);
 	    return (both) ? 2 : 1;

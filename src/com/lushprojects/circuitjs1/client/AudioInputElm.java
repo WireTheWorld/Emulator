@@ -24,8 +24,6 @@ import java.util.HashMap;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FileUpload;
 
 class AudioFileEntry {
@@ -44,7 +42,7 @@ class AudioInputElm extends RailElm {
     	
     	static int lastSamplingRate;
     	
-    	// cache to preserve audio data when doing cut/paste, or undo/redo
+    	// 缓存音频数据，以便在剪切/粘贴或撤销/重做时保留数据
     	static int fileNumCounter = 1;
     	static HashMap<Integer, AudioFileEntry> audioFileMap = new HashMap<Integer, AudioFileEntry>();
     	
@@ -72,8 +70,8 @@ class AudioInputElm extends RailElm {
 	double fmphase;
 	
 	String dump() {
-	    // add a file number to the dump so we can preserve the audio file data when doing cut and paste, or undo/redo.
-	    // we don't save the entire file in the dump because it would be huge.
+	    // 在导出数据中添加文件编号，以便在剪切粘贴或撤销/重做时保留音频文件数据
+	    // 我们不会将整个文件保存在导出数据中，因为文件太大了。
 	    if (data != null) {
 		if (fileNum == 0)
 		    fileNum = fileNumCounter++;
@@ -149,7 +147,7 @@ class AudioInputElm extends RailElm {
 		startPosition = ei.value;
 	}
 	
-	// fetch audio data for a selected file
+	// 获取所选文件的音频数据
 	static native String fetchLoadFileData(AudioInputElm elm, Element uploadElement) /*-{
 	    var oFiles = uploadElement.files;
        	    var context = new (window.AudioContext || window.webkitAudioContext)();

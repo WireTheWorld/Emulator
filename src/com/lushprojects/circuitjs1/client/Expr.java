@@ -164,7 +164,7 @@ class Expr {
     static final int E_SELECT = 27;
     static final int E_PWR = 28;
     static final int E_PWRS = 29;
-    static final int E_A = 30; // should be at end
+    static final int E_A = 30; // 应位于末尾
 };
 
 class ExprParser {

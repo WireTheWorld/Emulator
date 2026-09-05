@@ -48,7 +48,7 @@ package com.lushprojects.circuitjs1.client;
 	void reset() {
 	    super.reset();
 	    current = curcount = curSourceValue = 0;
-	    // put small charge on caps when reset to start oscillators
+	    // 重置时给电容充入少量电荷，以启动振荡器
 	    voltdiff = initialVoltage;
 	}
 	void shorted() {
@@ -60,16 +60,16 @@ package com.lushprojects.circuitjs1.client;
 	    return super.dump() + " " + capacitance + " " + voltdiff + " " + initialVoltage;
 	}
 	
-	// used for PolarCapacitorElm
+	// 用于 PolarCapacitorElm
 	Point platePoints[];
 	
 	void setPoints() {
 	    super.setPoints();
 	    double f = (dn/2-4)/dn;
-	    // calc leads
+	    // 计算引线
 	    lead1 = interpPoint(point1, point2, f);
 	    lead2 = interpPoint(point1, point2, 1-f);
-	    // calc plates
+	    // 计算极板
 	    plate1 = newPointArray(2);
 	    plate2 = newPointArray(2);
 	    interpPoint2(point1, point2, plate1[0], plate1[1], f, 12);
@@ -80,7 +80,7 @@ package com.lushprojects.circuitjs1.client;
 	    int hs = 12;
 	    setBbox(point1, point2, hs);
 	    
-	    // draw first lead and plate
+	    // 绘制第一条引线和极板
 	    setVoltageColor(g, volts[0]);
 	    drawThickLine(g, point1, lead1);
 	    setPowerColor(g, false);
@@ -88,7 +88,7 @@ package com.lushprojects.circuitjs1.client;
 	    if (sim.powerCheckItem.getState())
 		g.setColor(Color.gray);
 
-	    // draw second lead and plate
+	    // 绘制第二条引线和极板
 	    setVoltageColor(g, volts[1]);
 	    drawThickLine(g, point2, lead2);
 	    setPowerColor(g, false);
@@ -113,17 +113,17 @@ package com.lushprojects.circuitjs1.client;
 	}
 	void stamp() {
 	    if (sim.dcAnalysisFlag) {
-		// when finding DC operating point, replace cap with a 100M resistor
+		// 求直流工作点时，将电容替换为 100M 电阻
 		sim.stampResistor(nodes[0], nodes[1], 1e8);
 		curSourceValue = 0;
 		return;
 	    }
 	    
-	    // capacitor companion model using trapezoidal approximation
-	    // (Norton equivalent) consists of a current source in
-	    // parallel with a resistor.  Trapezoidal is more accurate
-	    // than backward euler but can cause oscillatory behavior
-	    // if RC is small relative to the timestep.
+	    // 电容伴随模型采用梯形近似
+	    // （诺顿等效）由一个电流源与一个电阻
+	    // 并联组成。梯形法比后向欧拉法更精确，
+	    // 但如果 RC 相对于时间步长较小，
+	    // 则可能引起振荡行为。
 	    if (isTrapezoidal())
 		compResistance = sim.timeStep/(2*capacitance);
 	    else
@@ -144,9 +144,9 @@ package com.lushprojects.circuitjs1.client;
 		current = voltdiff/1e8;
 		return;
 	    }
-	    // we check compResistance because this might get called
-	    // before stamp(), which sets compResistance, causing
-	    // infinite current
+	    // 我们检查 compResistance，因为此方法可能在
+	    // stamp()（设置 compResistance）之前被调用，
+	    // 否则会导致电流无穷大
 	    if (compResistance > 0)
 		current = voltdiff/compResistance + curSourceValue;
 	}

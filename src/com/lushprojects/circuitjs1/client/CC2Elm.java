@@ -42,17 +42,17 @@ package com.lushprojects.circuitjs1.client;
 	    pins[2] = new Pin(1, SIDE_E, "Z");
 	}
 	void getInfo(String arr[]) {
-	    arr[0] = (gain == 1) ? "CCII+~" : "CCII-~"; // ~ is for localization
+	    arr[0] = (gain == 1) ? "CCII+~" : "CCII-~"; // ~ 用于本地化
 	    arr[1] = "X,Y = " + getVoltageText(volts[0]);
 	    arr[2] = "Z = " + getVoltageText(volts[2]);
 	    arr[3] = "I = " + getCurrentText(pins[0].current);
 	}
 	//boolean nonLinear() { return true; }
 	void stamp() {
-	    // X voltage = Y voltage
+	    // X 电压 = Y 电压
 	    sim.stampVoltageSource(0, nodes[0], pins[0].voltSource);
 	    sim.stampVCVS(0, nodes[1], 1, pins[0].voltSource);
-	    // Z current = gain * X current
+	    // Z 电流 = gain * X 电流
 	    sim.stampCCCS(0, nodes[2], pins[0].voltSource, gain);
 	}
 	void draw(Graphics g) {

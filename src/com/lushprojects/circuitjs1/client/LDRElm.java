@@ -6,11 +6,11 @@ import com.google.gwt.canvas.dom.client.CanvasGradient;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 
-/*Bill Collis - June 2015 */
+/*Bill Collis - 2015年6月 */
 
 class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
-    double position; //of the slider 0.005 to 0.995
-    double resistance; //based upon slider position
+    double position; //滑块位置 0.005 至 0.995
+    double resistance; //基于滑块位置
     double minLux, maxLux;
     double lux;
 
@@ -18,12 +18,12 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
     Label label;
     String sliderText;
 
-    //constructor - when initially created
+    //构造函数 - 最初创建时
     public LDRElm(int xx, int yy) {
 	super(xx, yy);
 	//setup();
-	minLux = 0.1; //dark
-	maxLux = 10000; // sunlight
+	minLux = 0.1; //黑暗
+	maxLux = 10000; // 阳光
 	position = .34; 
 
 	lux = LuxFromSliderPos();
@@ -32,17 +32,17 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	createSlider();
     }
 
-    //constructor - when read in from file
+    //构造函数 - 从文件读入时
     public LDRElm(int xa, int ya, int xb, int yb, int f,
 	    StringTokenizer st) {
 	super(xa, ya, xb, yb, f);
-	minLux = 0.1; //dark
-	maxLux = 10000; // sunlight
+	minLux = 0.1; //黑暗
+	maxLux = 10000; // 阳光
 	position = new Double(st.nextToken()).doubleValue();
 	lux = LuxFromSliderPos();
 	resistance = calcResistance(lux); 
 	sliderText = CustomLogicModel.unescape(st.nextToken());
-	createSlider(); //uses position to set the slider   
+	createSlider(); //使用 position 来设置滑块   
     }
 
     //void setup() {
@@ -51,7 +51,7 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
     int getPostCount() { return 2; }
     int getDumpType() { return 374; } //LDR
 
-    //data for file saving - make sure it matches order of items in file input constructor
+    //用于文件保存的数据 - 确保与文件输入构造函数中的项顺序匹配
     String dump() { 
 	return super.dump() + " " + position  + " " + CustomLogicModel.escape(sliderText); 
     }
@@ -74,7 +74,7 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
     }
     Point ps3, ps4;   
 
-    //called straight after constructor when txt file is loaded
+    //在 txt 文件加载后紧接着构造函数被调用
     void setPoints() {
 	super.setPoints();
 	calcLeads(32);
@@ -85,15 +85,15 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	ps4 = new Point();
     }
     Polygon arrowPoly;
-    void draw(Graphics g) { //used Resistor draw
+    void draw(Graphics g) { //使用电阻器的绘制方法
 	//int segments = 16;
 	int i;
 	//int ox = 0;
-	int hs=6; //width 
+	int hs=6; //宽度 
 	double v1 = volts[0];
 	double v2 = volts[1];
-	setBbox(point1, point2, hs); //the two points that are there when the device is being created
-	draw2Leads(g); //from point1 to lead1 and lead1 to point2 (lead1&2 are on the body) 
+	setBbox(point1, point2, hs); //器件创建时就存在的两个点
+	draw2Leads(g); //从 point1 到 lead1 以及 lead1 到 point2（lead1 和 lead2 位于器件本体上） 
 	setPowerColor(g, true);
 	double len = distance(lead1, lead2);
 	g.context.save();
@@ -114,20 +114,20 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	    g.context.stroke();
 
 	} else    {
-	    g.context.strokeRect(0, -hs, len, 2.0*hs); //draw the box for the euro resistor
+	    g.context.strokeRect(0, -hs, len, 2.0*hs); //绘制欧式电阻器的方框
 	}
 
-	g.context.beginPath(); //thermistor symbol lines 0 is in the middle of the left handside of the resistor box
-	//upper arrow
-	g.context.moveTo(-8,26);   //arrow1 start   (y,x coordinates from center?)
-	g.context.lineTo(8,12);		//arrow end point   
-	g.context.moveTo(2,12);  	//arrow 1 head
-	g.context.lineTo(8,12);		//arrow end point
+	g.context.beginPath(); //热敏电阻符号线条，0 位于电阻器方框左侧的中间
+	//上箭头
+	g.context.moveTo(-8,26);   //箭头1起点   (y,x坐标来自中心？)
+	g.context.lineTo(8,12);		//箭头终点   
+	g.context.moveTo(2,12);  	//箭头1头部
+	g.context.lineTo(8,12);		//箭头终点
 	g.context.lineTo(8,18);	
-	g.context.moveTo(12,26);   //arrow2 start   (y,x coordinates from center?)
-	g.context.lineTo(26,12);		//arrow end point   
-	g.context.moveTo(20,12);  	//arrow 1 head
-	g.context.lineTo(26,12);		//arrow end point
+	g.context.moveTo(12,26);   //箭头2起点   (y,x坐标来自中心？)
+	g.context.lineTo(26,12);		//箭头终点   
+	g.context.moveTo(20,12);  	//箭头1头部
+	g.context.lineTo(26,12);		//箭头终点
 	g.context.lineTo(26,18);	
 
 	g.context.stroke();
@@ -168,7 +168,7 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	}
 	return null;
     }
-    //component edited
+    //元件被编辑
     public void setEditValue(int n, EditInfo ei) {
 	if (n == 0) {
 	    sliderText = ei.textf.getText();
@@ -189,7 +189,7 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	    slider.onMouseWheel(e);
     }
 
-    double calcResistance(double lux) //knowing the lux
+    double calcResistance(double lux) //已知 lux 时
     {
 	//double loglux = Math.log10(lux);
 	//double slope = -1.4;
@@ -202,7 +202,7 @@ class LDRElm extends CircuitElm implements Command, MouseWheelHandler {
 	r = Math.round(r);
 	return r;
     }
-    double LuxFromSliderPos() //knowing slider position etc
+    double LuxFromSliderPos() //已知滑块位置等时
     {
 	return maxLux * position + minLux ;
     }

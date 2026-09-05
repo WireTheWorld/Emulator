@@ -20,8 +20,8 @@
 package com.lushprojects.circuitjs1.client;
 
 class DiacElm extends CircuitElm {
-    // resistor from 0 to 2, 3
-    // diodes from 2, 3 to 1
+    // 从 0 到 2、3 的电阻
+    // 从 2、3 到 1 的二极管
     double onresistance, offresistance, breakdown, holdcurrent;
     boolean state;
     Diode diode1, diode2;

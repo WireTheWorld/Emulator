@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// contributed by Edward Calver
+// 由 Edward Calver 贡献
 
     class SipoShiftElm extends ChipElm {
 	boolean hasReset() {return false;}
@@ -28,7 +28,7 @@ package com.lushprojects.circuitjs1.client;
 			    StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
-	short data=0;//This has to be a short because there's no unsigned byte and it's screwing with my code
+	short data=0;//必须用 short，因为没有无符号字节类型，这给我的代码带来了麻烦
 	boolean clockstate=false;
 	String getChipName() { return "SIPO shift register"; }
 

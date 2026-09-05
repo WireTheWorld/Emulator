@@ -19,13 +19,13 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// 3 nodes, 2 internal nodes
-// 1 = MT1, 0 = MT2, 2 = gate
-// 3 = internal node between MT1 and MT2 (mtinode)
-// 1,3 = variable resistor
-// 3,0 = back-to-back diodes
-// 2,1 = resistor
-// MT1 and MT2 are nodes 1 and 0 (instead of 0 and 1) so that MT1 will be at the bottom when drawn bottom-to-top
+// 3 个节点,2 个内部节点
+// 1 = MT1, 0 = MT2, 2 = 门极(gate)
+// 3 = MT1 和 MT2 之间的内部节点 (mtinode)
+// 1,3 = 可变电阻
+// 3,0 = 背靠背二极管
+// 2,1 = 电阻
+// MT1 和 MT2 是节点 1 和 0(而不是 0 和 1),以便自下而上绘制时 MT1 位于底部
 
 class TriacElm extends CircuitElm {
     final int mt1node = 1;
@@ -171,7 +171,7 @@ class TriacElm extends CircuitElm {
 	    g.setColor(Color.white);
 	    int ds = sign(dx);
 	    g.drawString("MT1", lead2.x+((ds < 0) ? 5 : -30), lead2.y+12);
-	    g.drawString("MT2", lead1.x+5, lead1.y-4); // x+6 if ds=1, -12 if -1
+	    g.drawString("MT2", lead1.x+5, lead1.y-4); // 若 ds=1 则 x+6,若 ds=-1 则 x-12
 	    g.drawString("G", gate[0].x, gate[0].y+12);
 	}
 	
@@ -254,6 +254,6 @@ class TriacElm extends CircuitElm {
     }
     boolean canViewInScope() { return true; }
     double getVoltageDiff() { return volts[mt2node] - volts[mt1node]; }
-    double getCurrent() { return i2; } // for scope
+    double getCurrent() { return i2; } // 用于示波器
 }
 

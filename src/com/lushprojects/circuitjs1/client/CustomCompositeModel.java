@@ -6,10 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.TextArea;
 
-// model for subcircuits
+// 子电路的模型
 
 class ExtListEntry {
     ExtListEntry(String s, int n) { name = s; node = n; side = ChipElm.SIDE_W; }
@@ -39,7 +37,7 @@ public class CustomCompositeModel implements Comparable<CustomCompositeModel> {
 	if (modelMap == null) {
 	    modelMap = new HashMap<String,CustomCompositeModel>();
 	    
-	    // create default stub model
+	    // 创建默认桩模型
 	    Vector<ExtListEntry> extList = new Vector<ExtListEntry>();
 	    extList.add(new ExtListEntry("gnd", 1));
 	    CustomCompositeModel d = createModel("default", "0 0", "GroundElm 1", extList);

@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// contributed by Edward Calver
+// 由 Edward Calver 贡献
 
     class PisoShiftElm extends ChipElm {
 	boolean hasReset() {return false;}
@@ -28,7 +28,7 @@ package com.lushprojects.circuitjs1.client;
 			    StringTokenizer st) {
 	    super(xa, ya, xb, yb, f, st);
 	}
-	short data=0;//Lack of unsigned types sucks
+	short data=0;//缺少无符号类型，真麻烦
 	boolean clockstate=false;
 	boolean modestate=false;
 	String getChipName() { return "PISO shift register"; }

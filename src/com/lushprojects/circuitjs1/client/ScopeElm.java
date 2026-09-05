@@ -19,7 +19,6 @@
 
 package com.lushprojects.circuitjs1.client;
 
-import java.util.Vector;
 
 class ScopeElm extends CircuitElm {
     
@@ -91,7 +90,7 @@ class ScopeElm extends CircuitElm {
     public String dump() {
 	String dumpStr=super.dump();
 	String sStr = elmScope.dump().replace(' ', '_');
-	sStr = sStr.replaceFirst("o_", ""); // remove unused prefix for embedded Scope
+	sStr = sStr.replaceFirst("o_", ""); // 移除嵌入式 Scope 未使用的前缀
 	return dumpStr + " " + sStr;
     }
     

@@ -21,41 +21,41 @@ package com.lushprojects.circuitjs1.client;
 
 import java.util.HashMap;
 
-//CirSim.java (c) 2010 - 2017 by Paul Falstad
-//GWT conversion (c) 2015 - 2017 by Iain Sharp
+//CirSim.java (c) 2010 - 2017 作者 Paul Falstad
+//GWT 转换 (c) 2015 - 2017 作者 Iain Sharp
 
-//Version History
+//版本历史
 //v1.9.1js 16-11-06 Iain Sharp
-//Add import of file from CORS compatible link
+//添加从支持 CORS 的链接导入文件
 //v1.9.0js 16-11-06 Iain Sharp
-// Add URL-shortener and Dropbox integration
+// 添加 URL 缩短器和 Dropbox 集成
 //v1.8.0js 16-10-30 Iain Sharp
-// Incorporate latest Falstad updates. Improvements to UI and bug fixes
+// 整合 Falstad 的最新更新。改进 UI 并修复错误
 //v1.0.1 15-06-15
-//Convert source code to GPLv2
-//Incorporate example files in to project
+//将源代码转换为 GPLv2
+//将示例文件纳入项目
 //v1.0.0 15-06-05
-//Import/export to/from text now fixed
+//文本导入/导出现已修复
 //v0.1.3 15-06-03
-//Handles appear on components when dragged
-//Improved integration of potentiometers and VarRails with sliders - colour changes and support
-//for scroll wheel.
+//拖动时元件上出现操作手柄
+//改进电位器和可变电压轨与滑块的集成 - 颜色变化以及对
+//滚轮的支持。
 //v0.1.2 15-06-01
-//Automatic selection of post drag mode when user is near a handle in select mode
-//Visual appearance of handles changed
-//Accepts "2k2" style engineers short-hand for component values
-//Menus prettified
+//在选择模式下，当用户靠近手柄时自动选择拖动后模式
+//手柄的视觉效果已更改
+//接受 "2k2" 风格的工程师元件值简写
+//美化菜单
 //v0.1.1 
-//Bug fix for PNP transistors and past
+//修复 PNP 晶体管及粘贴相关的错误
 //v0.1.0 - 
-//Initial test release on web
+//在 Web 上的初始测试发布
 
 
-//ToDos
-// Scope improvements
-//UI improvements
-//Potentiometer - improve drawing code
-//Coil drawing - find out why my alternative code doesn't work
+//待办事项
+// 示波器改进
+//UI 改进
+//电位器 - 改进绘制代码
+//线圈绘制 - 查明我的替代代码为何不起作用
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -74,7 +74,7 @@ public class circuitjs1 implements EntryPoint {
 	
 	public static final String versionString="2.4.2js";
 	
-	// Set to true if the server runs the shortrelay.php file in the same directory as the circuit simulator
+	// 如果服务器在与电路模拟器相同的目录中运行 shortrelay.php 文件，则设为 true
 	public static final boolean shortRelaySupported = true;
 
 	static CirSim mysim;
@@ -86,7 +86,7 @@ public class circuitjs1 implements EntryPoint {
       loadLocale();
   }
 
-  native String language()  /*-{ // Modified to support Electron which return empty array for navigator.languages
+  native String language()  /*-{ // 已修改以支持 Electron，它为 navigator.languages 返回空数组
       if (navigator.languages) {
         if (navigator.languages.length>0)
           return navigator.languages[0];
@@ -112,7 +112,7 @@ public class circuitjs1 implements EntryPoint {
 //  	lang = "pl";
   	lang = lang.replaceFirst("-.*", "");
   	if (lang.startsWith("en")) {
-  	    // no need to load locale file for English
+  	    // 英语无需加载语言文件
   	    loadSimulator();
   	    return;
   	}
@@ -125,11 +125,11 @@ public class circuitjs1 implements EntryPoint {
 				}
 
 				public void onResponseReceived(Request request, Response response) {
-					// processing goes here
+					// 在此处进行处理
 					if (response.getStatusCode()==Response.SC_OK) {
 					String text = response.getText();
 					processLocale(text);
-					// end or processing
+					// 处理结束
 					}
 					else {
 						GWT.log("Bad file server response:"+response.getStatusText() );

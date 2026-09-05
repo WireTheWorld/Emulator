@@ -55,8 +55,8 @@ package com.lushprojects.circuitjs1.client;
 	    super.reset();
 	    temp = roomTemp;
 	    
-	    // make sure resistance is not 0 or NaN or current will be NaN before we have a chance
-	    // to call startIteration()
+	    // 确保电阻不为 0 或 NaN，否则在我们有机会
+	    // 调用 startIteration() 之前电流就会是 NaN
 	    resistance = 100;
 	}
 	final int filament_len = 24;
@@ -103,7 +103,7 @@ package com.lushprojects.circuitjs1.client;
 	    setBbox(point1, point2, 4);
 	    adjustBbox(bulb.x-bulbR, bulb.y-bulbR,
 		       bulb.x+bulbR, bulb.y+bulbR);
-	    // adjustbbox
+	    // 调整包围盒
 	    draw2Leads(g);
 	    setPowerColor(g, true);
 	    g.setColor(getTempColor());
@@ -143,9 +143,9 @@ package com.lushprojects.circuitjs1.client;
 	}
 	boolean nonLinear() { return true; }
 	void startIteration() {
-	    // based on http://www.intusoft.com/nlpdf/nl11.pdf
+	    // 基于 http://www.intusoft.com/nlpdf/nl11.pdf
 	    double nom_r = nom_v*nom_v/nom_pow;
-	    // this formula doesn't work for values over 5390
+	    // 该公式对超过 5390 的值不适用
 	    double tp = (temp > 5390) ? 5390 : temp;
 	    resistance = nom_r*(1.26104 -
 				4.90662*Math.sqrt(17.1839/tp - 0.00318794) -
@@ -170,7 +170,7 @@ package com.lushprojects.circuitjs1.client;
 	    arr[5] = "T = " + ((int) temp) + " K";
 	}
 	public EditInfo getEditInfo(int n) {
-	    // ohmString doesn't work here on linux
+	    // ohmString 在 linux 上在这里不起作用
 	    if (n == 0)
 		return new EditInfo("Nominal Power", nom_pow, 0, 0);
 	    if (n == 1)

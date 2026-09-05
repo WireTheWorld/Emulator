@@ -20,13 +20,12 @@
 package com.lushprojects.circuitjs1.client;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextArea;
 
 class EditInfo {
-    	// mn/mx were used in the java version to create sliders in the edit dialog but we don't do that in the javascript version, so this
-    	// constructor is deprecated
+    	// mn/mx 在 java 版本中用于在编辑对话框中创建滑块，但 javascript 版本中不再这样做，因此这个
+    	// 构造函数已废弃
 	EditInfo(String n, double val, double mn, double mx) {
 		name = n;
 		value = val;
@@ -64,7 +63,7 @@ class EditInfo {
 	boolean dimensionless;
 	boolean noSliders;
 	
-	// for slider dialog
+	// 用于滑块对话框
 	TextBox minBox, maxBox, labelBox;
 	
 	boolean canCreateAdjustable() {

@@ -1,15 +1,15 @@
 package com.lushprojects.circuitjs1.client;
 
-// based on https://ctms.engin.umich.edu/CTMS/index.php?example=MotorPosition&section=SystemModeling
+// 基于 https://ctms.engin.umich.edu/CTMS/index.php?example=MotorPosition&section=SystemModeling
 
 
 class DCMotorElm extends CircuitElm {
 
     Inductor ind, indInertia;
-    // Electrical parameters
+    // 电气参数
     double resistance, inductance;
-    // Electro-mechanical parameters
-    double K, Kb, J, b, gearRatio, tau; //tau reserved for static friction parameterization  
+    // 机电参数
+    double K, Kb, J, b, gearRatio, tau; //tau 保留用于静摩擦参数化  
     public double angle;
     public double speed;
 
@@ -31,8 +31,8 @@ class DCMotorElm extends CircuitElm {
 	    StringTokenizer st) {
 	super(xa, ya, xb, yb, f);
 	angle = pi/2;speed = 0;
-	//read:
-	// inductance; resistance, K, Kb, J, b, gearRatio, tau
+	//读取:
+	// 电感; 电阻, K, Kb, J, b, gearRatio, tau
 	inductance = new Double(st.nextToken()).doubleValue();
 	resistance = new Double(st.nextToken()).doubleValue(); 
 	K = 		new Double(st.nextToken()).doubleValue();
@@ -49,7 +49,7 @@ class DCMotorElm extends CircuitElm {
     }
     int getDumpType() { return 415; }
     String dump() {
-	// dump: inductance; resistance, K, Kb, J, b, gearRatio, tau
+	// 转储:电感; 电阻, K, Kb, J, b, gearRatio, tau
 	return super.dump() + " " +  inductance + " " + resistance + " " + K + " " +  Kb + " " + J + " " + b + " " + gearRatio + " " + tau;
     }
     public double getAngle(){ return(angle);}
@@ -75,24 +75,24 @@ class DCMotorElm extends CircuitElm {
     }
 
     void stamp() {
-	// stamp a bunch of internal parts to help us simulate the motor.  It would be better to simulate this mini-circuit in code to reduce
-	// the size of the matrix.
+	// 为一堆内部部件建立 stamp,以帮助我们模拟电机。最好在代码中模拟这个微型电路,以减少
+	// 矩阵的大小。
 	
-	//nodes[0] nodes [1] are the external nodes
-	//Electrical part:
-	// inductor from motor nodes[0] to internal nodes[2]
+	//nodes[0] 和 nodes[1] 是外部节点
+	//电气部分:
+	// 从电机节点 nodes[0] 到内部节点 nodes[2] 的电感
 	ind.stamp(nodes[0], nodes[2]);
-	// resistor from internal nodes[2] to internal nodes[3] // motor post 2
+	// 从内部节点 nodes[2] 到内部节点 nodes[3] 的电阻 // 电机端子 2
 	sim.stampResistor(nodes[2], nodes[3], resistance);
-	// Back emf voltage source from internal nodes[3] to external nodes [1]
+	// 从内部节点 nodes[3] 到外部节点 nodes[1] 的反电动势电压源
 	sim.stampVoltageSource(nodes[3],nodes[1], voltSources[0]); // 
 
-	//Mechanical part:
-	// inertia inductor from internal nodes[4] to internal nodes[5]
+	//机械部分:
+	// 从内部节点 nodes[4] 到内部节点 nodes[5] 的惯性电感
 	indInertia.stamp(nodes[4], nodes[5]);
-	// resistor from  internal nodes[5] to  ground 
+	// 从内部节点 nodes[5] 到地的电阻 
 	sim.stampResistor(nodes[5], 0, b);
-	// Voltage Source from  internal nodes[4] to ground
+	// 从内部节点 nodes[4] 到地的电压源
 	//System.out.println("doing stamp voltage");
 	sim.stampVoltageSource(nodes[4], 0, voltSources[1]); 
 	//System.out.println("doing stamp voltage "+voltSource);
@@ -100,7 +100,7 @@ class DCMotorElm extends CircuitElm {
     void startIteration() {
 	ind.startIteration(volts[0]-volts[2]);
 	indInertia.startIteration(volts[4]-volts[5]);
-	// update angle:
+	// 更新角度:
 	angle= angle + speed*sim.timeStep;
     }
 

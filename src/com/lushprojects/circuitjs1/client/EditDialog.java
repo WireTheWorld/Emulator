@@ -57,7 +57,7 @@ class EditDialog extends DialogBox  {
 
 	EditDialog(Editable ce, CirSim f) {
 //		super(f, "Edit Component", false);
-		super(); // Do we need this?
+		super(); // 需要这个吗？
 		setText(CirSim.LS("Edit Component"));
 		cframe = f;
 		elm = ce;
@@ -161,7 +161,7 @@ class EditDialog extends DialogBox  {
 	}
 	
 	String unitString(EditInfo ei) {
-	    // for voltage elements, express values in rms if that would be shorter
+	    // 对于电压元件，如果以 rms 表示更简短，则用 rms 表示数值
 	    if (elm != null && elm instanceof VoltageElm &&
 		Math.abs(ei.value) > 1e-4 &&
 		diffFromInteger(ei.value*1e4) > diffFromInteger(ei.value*1e4/ROOT2))
@@ -207,9 +207,9 @@ class EditDialog extends DialogBox  {
 		    s = s.substring(0, s.length()-3).trim();
 		    rmsMult = ROOT2;
 		}
-		// rewrite shorthand (eg "2k2") in to normal format (eg 2.2k) using regex
+		// 使用正则表达式将简写（如 "2k2"）改写为正常格式（如 2.2k）
 		s=s.replaceAll("([0-9]+)([pPnNuUmMkKgG])([0-9]+)", "$1.$3$2");
-		// rewrite meg to M
+		// 将 meg 改写为 M
 		s=s.replaceAll("[mM][eE][gG]$", "M");
 		int len = s.length();
 		char uc = s.charAt(len-1);
@@ -220,7 +220,7 @@ class EditDialog extends DialogBox  {
 		case 'n': case 'N': mult = 1e-9; break;
 		case 'u': case 'U': mult = 1e-6; break;
 
-		// for ohm values, we used to assume mega for lowercase m, otherwise milli
+		// 对于欧姆值，我们过去假定小写 m 表示兆，否则表示毫
 		case 'm': mult = /*(ei.forceLargeM) ? 1e6 : */ 1e-3; break;
 
 		case 'k': case 'K': mult = 1e3; break;
@@ -240,13 +240,13 @@ class EditDialog extends DialogBox  {
 				try {
 					double d = parseUnits(ei);
 					ei.value = d;
-				} catch (Exception ex) { /* ignored */ }
+				} catch (Exception ex) { /* 忽略 */ }
 			}
 			if (ei.button != null)
 			    continue;
 			elm.setEditValue(i, ei);
 			
-			// update slider if any
+			// 如有滑动条则更新
 			if (elm instanceof CircuitElm) {
 			    Adjustable adj = cframe.findAdjustable((CircuitElm)elm, i);
 			    if (adj != null)
@@ -265,7 +265,7 @@ class EditDialog extends DialogBox  {
 		EditInfo ei = einfos[i];
 		if (ei.choice == src || ei.checkbox == src || ei.button == src) {
 		    
-		    // if we're pressing a button, make sure to apply changes first
+		    // 如果按下的是按钮，请确保先应用更改
 		    if (ei.button == src && !ei.newDialog) {
 			apply();
 			applied = true;
@@ -278,8 +278,8 @@ class EditDialog extends DialogBox  {
 		}
 	    }
 	    if (changed) {
-		// apply changes before we reset everything
-		// (need to check if we already applied changes; otherwise Diode create simple model button doesn't work)
+		// 在重置一切之前应用更改
+		// （需要检查我们是否已应用更改；否则二极管“创建简单模型”按钮将无法工作）
 		if (!applied)
 		    apply();
 		

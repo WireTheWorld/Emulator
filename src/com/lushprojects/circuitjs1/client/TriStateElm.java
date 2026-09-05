@@ -21,7 +21,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// contributed by Edward Calver
+// 由 Edward Calver 贡献
 
 class TriStateElm extends CircuitElm {
     double resistance, r_on, r_off;
@@ -101,7 +101,7 @@ class TriStateElm extends CircuitElm {
 	return 0;
     }
 
-    // we need this to be able to change the matrix for each step
+    // 我们需要这个以便每一步都能更改矩阵
     boolean nonLinear() {
 	return true;
     }
@@ -159,8 +159,8 @@ class TriStateElm extends CircuitElm {
 	arr[4] = "Vc = " + getVoltageText(volts[2]);
     }
 
-    // there is no current path through the input, but there
-    // is an indirect path through the output to ground.
+    // 输入端没有电流通路，但存在
+    // 一条通过输出端到地的间接通路。
     boolean getConnection(int n1, int n2) {
 	return false;
     }

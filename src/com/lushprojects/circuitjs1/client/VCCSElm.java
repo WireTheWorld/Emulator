@@ -61,7 +61,7 @@ package com.lushprojects.circuitjs1.client;
 	    exprState = new ExprState(inputCount);
 	    allocNodes();
 	}
-	String getChipName() { return "VCCS~"; } // ~ is for localization 
+	String getChipName() { return "VCCS~"; } // ~ 用于本地化 
 	boolean nonLinear() { return true; }
 	void stamp() {
             sim.stampNonLinear(nodes[inputCount]);
@@ -73,7 +73,7 @@ package com.lushprojects.circuitjs1.client;
         }
 
         double getConvergeLimit() {
-            // get maximum change in voltage per step when testing for convergence.  be more lenient over time
+            // 测试收敛时获取每步电压的最大变化量。随着时间推移放宽标准
             if (sim.subIterations < 10)
         	return .001;
             if (sim.subIterations < 200)
@@ -89,16 +89,16 @@ package com.lushprojects.circuitjs1.client;
         void doStep() {
             int i;
             
-            // no current path?  give up
+            // 没有电流通路？放弃
             if (broken) {
         	pins[inputCount].current = 0;
         	pins[inputCount+1].current = 0;
-        	// avoid singular matrix errors
+        	// 避免奇异矩阵错误
         	sim.stampResistor(nodes[inputCount], nodes[inputCount+1], 1e8);
         	return;
             }
             
-            // converged yet?
+            // 已收敛？
             double convergeLimit = getConvergeLimit();
             for (i = 0; i != inputCount; i++) {
         	if (Math.abs(volts[i]-lastVolts[i]) > convergeLimit) {
@@ -109,7 +109,7 @@ package com.lushprojects.circuitjs1.client;
 //        	    volts[i] = 0;
             }
             if (expr != null) {
-        	// calculate output
+        	// 计算输出
         	for (i = 0; i != inputCount; i++)
         	    exprState.values[i] = volts[i];
         	exprState.t = sim.t;
@@ -118,7 +118,7 @@ package com.lushprojects.circuitjs1.client;
 //        	    sim.converged = false;
         	double rs = v0;
         	
-        	// calculate and stamp output derivatives
+        	// 计算并写入输出导数
         	for (i = 0; i != inputCount; i++) {
         	    double dv = volts[i]-lastVolts[i];
         	    if (Math.abs(dv) < 1e-6)
@@ -133,7 +133,7 @@ package com.lushprojects.circuitjs1.client;
         	    sim.stampVCCurrentSource(nodes[inputCount], nodes[inputCount+1], nodes[i], 0, dx);
         	    //if (sim.subIterations > 1)
         		//sim.console("ccedx " + i + " " + dx + " " + sim.subIterations + " " + sim.t);
-        	    // adjust right side
+        	    // 调整右端项
         	    rs -= dx*volts[i];
         	    exprState.values[i] = volts[i];
         	}

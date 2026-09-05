@@ -67,7 +67,7 @@ class CCCSElm extends VCCSElm {
         	for (i = 0; i != inputCount; i += 2)
         	    pins[i+1].voltSource = voltageSources[i/2].getVoltageSource();
             } else {
-                // voltage sources (0V) between C+ and C- so we can measure current
+                // 在 C+ 和 C- 之间放置电压源（0V），以便测量电流
         	for (i = 0; i != inputCount; i += 2) {
         	    int vn1 = pins[i+1].voltSource;
         	    sim.stampVoltageSource(nodes[i], nodes[i+1], vn1, 0);
@@ -81,21 +81,21 @@ class CCCSElm extends VCCSElm {
 	double lastCurrents[];
 	
         void doStep() {
-            // no current path?  give up
+            // 没有电流通路？放弃
             if (broken) {
         	pins[inputCount].current = 0;
         	pins[inputCount+1].current = 0;
-        	// avoid singular matrix errors
+        	// 避免奇异矩阵错误
         	sim.stampResistor(nodes[inputCount], nodes[inputCount+1], 1e8);
         	return;
             }
 
-            // converged yet?
+            // 已收敛？
             double convergeLimit = getConvergeLimit()*.1;
             
             int i;
             if (isSpiceStyle()) {
-        	// get current from connected voltage sources
+        	// 从连接的电压源获取电流
         	for (i = 0; i != inputPairCount; i++)
         	    pins[i*2+1].current = voltageSources[i].getCurrent();
             }
@@ -107,7 +107,7 @@ class CCCSElm extends VCCSElm {
             }
 
             if (expr != null) {
-                // calculate output
+                // 计算输出
                 for (i = 0; i != inputPairCount; i++)
                     setCurrentExprValue(i, pins[i*2+1].current);
                 exprState.t = sim.t;
@@ -131,7 +131,7 @@ class CCCSElm extends VCCSElm {
                         dx = sign(dx, 1e-6);
                     sim.stampCCCS(nodes[inputCount+1], nodes[inputCount], pins[i*2+1].voltSource, dx);
                     
-                    // adjust right side
+                    // 调整右端项
                     rs -= dx*cur;
 //                    if (sim.subIterations > 1)
 //                        sim.console("ccedx " + i + " " + cur + " " + dx + " " + rs + " " + sim.subIterations + " " + sim.t);
@@ -146,7 +146,7 @@ class CCCSElm extends VCCSElm {
         }
 	
         void setCurrentExprValue(int n, double cur) {
-            // set i to current for backward compatibility
+            // 为了向后兼容，将 i 设为电流
             if (n == 0 && inputPairCount < 9)
                 exprState.values[8] = cur;
             exprState.values[n] = cur;
@@ -173,7 +173,7 @@ class CCCSElm extends VCCSElm {
         
         public void setEditValue(int n, EditInfo ei) {
             if (n == 1) {
-                // make sure number of inputs is even
+                // 确保输入数量为偶数
                 if (ei.value < 0 || ei.value > 8 || (ei.value % 2) == 1)
                     return;
                 inputCount = (int) ei.value;
@@ -189,8 +189,8 @@ class CCCSElm extends VCCSElm {
             if (!isSpiceStyle())
                 return;
             
-            // look for voltage sources across our inputs and use them rather than
-            // creating our own.  this is useful for converting spice subcircuits
+            // 在我们的输入端查找电压源并使用它们，而不是
+            // 自行创建。这对于转换 spice 子电路很有用
             voltageSources = new VoltageElm[inputPairCount];
             for (i = 0; i != inputCount; i += 2) {
                 for (j = 0; j != elmList.size(); j++) {

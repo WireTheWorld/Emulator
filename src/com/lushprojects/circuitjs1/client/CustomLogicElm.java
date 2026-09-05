@@ -37,9 +37,9 @@ public class CustomLogicElm extends ChipElm {
 	String s = super.dump();
 	s += " " + CustomLogicModel.escape(modelName);
 
-	// the code to do this in ChipElm doesn't work here because we don't know
-	// how many pins to read until we read the model name!  So we have to
-	// duplicate it here.
+	// ChipElm 中的这段代码在这里不适用,因为我们不知道
+	// 要读取多少个引脚,除非先读取模型名称!因此我们必须
+	// 在此处重复这段代码。
         int i;
         for (i = 0; i != getPostCount(); i++) {
             if (pins[i].output)
@@ -100,14 +100,14 @@ public class CustomLogicElm extends ChipElm {
 	return outputCount;
     }
 
-    // keep track of whether we have any tri-state outputs.  if not, then we can simplify things quite a bit, making the simulation faster
+    // 跟踪是否有任何三态输出。如果没有,则可以大大简化处理,使模拟更快
     boolean hasTriState() { return model == null ? false : model.triState; }
     
     boolean nonLinear() { return hasTriState(); }
     
     int getInternalNodeCount() {
-	// for tri-state outputs, we need an internal node to connect a voltage source to, and then connect a resistor from there to the output.
-	// we do this for all outputs if any of them are tri-state
+	// 对于三态输出,我们需要一个内部节点来连接电压源,然后从那里接一个电阻到输出端。
+	// 只要任何一个输出是三态,我们就对全部输出都这样做
 	return (hasTriState()) ? outputCount : 0; 
     }
     
@@ -138,10 +138,10 @@ public class CustomLogicElm extends ChipElm {
 	for (i = 0; i != getPostCount(); i++) {
 	    Pin p = pins[i];
 	    if (p.output) {
-		// connect output voltage source (to internal node if tri-state, otherwise connect directly to output)
+		// 连接输出电压源(若是三态则连接到内部节点,否则直接连到输出端)
 		sim.updateVoltageSource(0, nodes[i+add], p.voltSource, p.value ? 5 : 0);
 		
-		// add resistor for tri-state if necessary
+		// 如有必要,为三态输出添加电阻
 		if (hasTriState())
 		    sim.stampResistor(nodes[i+add], nodes[i], highImpedance[i] ? 1e8 : 1e-3);
 	    }
@@ -151,7 +151,7 @@ public class CustomLogicElm extends ChipElm {
     void execute() {
 	int i;
 	for (i = 0; i != model.rulesLeft.size(); i++) {
-	    // check for a match
+	    // 检查是否匹配
 	    String rl = model.rulesLeft.get(i);
 	    int j;
 	    for (j = 0; j != rl.length(); j++) {
@@ -162,31 +162,31 @@ public class CustomLogicElm extends ChipElm {
 		    break;
 		}
 		
-		// don't care
+		// 任意值(不关心)
 		if (x == '?')
 		    continue;
 		
-		// up transition
+		// 上升沿跳变
 		if (x == '+') {
 		    if (pins[j].value && !lastValues[j])
 			continue;
 		    break;
 		}
 		
-		// down transition
+		// 下降沿跳变
 		if (x == '-') {
 		    if (!pins[j].value && lastValues[j])
 			continue;
 		    break;
 		}
 		
-		// save pattern values
+		// 保存模式(pattern)值
 		if (x >= 'a' && x <= 'z') {
 		    patternValues[x-'a'] = pins[j].value;
 		    continue;
 		}
 		
-		// compare pattern values
+		// 比较模式(pattern)值
 		if (x >= 'A' && x <= 'z') {
 		    if (patternValues[x-'A'] != pins[j].value)
 			break;
@@ -196,7 +196,7 @@ public class CustomLogicElm extends ChipElm {
 	    if (j != rl.length())
 		continue;
 	    
-	    // success
+	    // 匹配成功
 	    String rr = model.rulesRight.get(i);
 	    for (j = 0; j != rr.length(); j++) {
 		char x = rr.charAt(j);
@@ -209,7 +209,7 @@ public class CustomLogicElm extends ChipElm {
 		    pins[j+inputCount].value = (x == '1');
 	    }
 	    
-	    // save values for transition checking
+	    // 保存数值用于跳变检测
 	    for (j = 0; j != postCount; j++)
 		lastValues[j] = pins[j].value;
 	    break;

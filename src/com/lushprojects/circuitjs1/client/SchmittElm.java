@@ -19,7 +19,7 @@
 
 package com.lushprojects.circuitjs1.client;
 
-// contributed by Edward Calver
+// 由 Edward Calver 贡献
 
 class SchmittElm extends InvertingSchmittElm{
 	public SchmittElm(int xx, int yy) {
@@ -35,8 +35,8 @@ class SchmittElm extends InvertingSchmittElm{
 	    double v0 = volts[1];
 	    double out;
 		if(state)
-		{//Output is high
-			if(volts[0]>upperTrigger)//Input voltage high enough to set output high
+		{//输出为高电平
+			if(volts[0]>upperTrigger)//输入电压足够高，可将输出置为高电平
 			{
 			state=false;
 			out=logicOnLevel;
@@ -47,8 +47,8 @@ class SchmittElm extends InvertingSchmittElm{
 			}
 		}
 		else
-		{//Output is low
-			if(volts[0]<lowerTrigger)//Input voltage low enough to set output low
+		{//输出为低电平
+			if(volts[0]<lowerTrigger)//输入电压足够低，可将输出置为低电平
 			{
 			state=true;
 			out=logicOffLevel;
@@ -89,7 +89,7 @@ class SchmittElm extends InvertingSchmittElm{
 	    gatePoly = createPolygon(triPoints);
 	}
         void getInfo(String arr[]) {
-            arr[0] = "Schmitt Trigger~"; // ~ is for localization
+            arr[0] = "Schmitt Trigger~"; // ~ 用于本地化
         }
 
 	@Override double getCurrentIntoNode(int n) {

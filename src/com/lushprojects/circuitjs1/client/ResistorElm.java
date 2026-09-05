@@ -104,7 +104,7 @@ import com.google.gwt.canvas.dom.client.CanvasGradient;
 	    return sim.LS("resistor") + ", " + getUnitText(resistance, sim.ohmString);
 	}
 	public EditInfo getEditInfo(int n) {
-	    // ohmString doesn't work here on linux
+	    // ohmString 在 linux 上在这里不起作用
 	    if (n == 0)
 		return new EditInfo("Resistance (ohms)", resistance, 0, 0);
 	    return null;

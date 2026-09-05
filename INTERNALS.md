@@ -1,112 +1,35 @@
-# Internals
+# 内部实现
 
-Here is a brief description of how we simulate a circuit.
-See the book Electronic Circuit and System Simulation Methods by
-Pillage, et al for more information.
+这里简要描述我们如何模拟电路。
+更多信息请参见 Pillage 等人所著的《Electronic Circuit and System Simulation Methods》一书。
 
-Basically, we create a matrix.  Each row in the matrix represents
-a node in the circuit.  The matrix equation looks like A x = B
-where x is a vector containing the voltages of each node.  B
-represents the net current in or out of each node, and should be
-all zeroes by Kirchoff's current law, unless there is a current
-source somewhere.
+基本上，我们创建一个矩阵。矩阵中的每一行代表
+电路中的一个节点。矩阵方程为 A x = B，
+其中 x 是包含每个节点电压的向量。B
+表示流入或流出每个节点的净电流，根据基尔霍夫电流定律，
+除非某处存在电流源，B 应该全为零。
 
-If you have a resistor, you want Vb-Va=IR or Vb/R - Va/R = I.  So
-the net current out of node b and into node a depends on the voltage
-Vb and Va.  You add matrix elements -1/R and 1/R at rows a and b
-and columns a and b to reflect this.  (See CirSim.stampResistor()).
-Then after adding all resistors to the matrix, you solve for x, and
-that gives you the voltage at each node, and from that you can
-derive the currents through each element.  We leave out node 0, the
-ground node, because the matrix would be singular otherwise (there
-would be an infinite number of solutions, because all nodes can be
-shifted up or down by the same voltage).
+如果你有一个电阻，你希望 Vb-Va=IR 或 Vb/R - Va/R = I。因此
+流出节点 b 并流入节点 a 的净电流取决于电压
+Vb 和 Va。你在第 a 行和第 b 行、第 a 列和第 b 列添加矩阵元素 -1/R 和 1/R 来反映这一点。（参见 CirSim.stampResistor()）。
+然后将所有电阻添加到矩阵后，你求解 x，就能得到每个节点的电压，由此你可以推导出流过每个元件的电流。我们省略节点 0，即地节点，因为否则矩阵将是奇异的（解会有无穷多个，因为所有节点都可以同时向上或向下移动相同的电压）。
 
-To implement a current source of current I, we simply subtract I from
-row a of the right side vector, and add I to row b.  This
-represents a flow of current I from a to b. (CirSim.stampCurrentSource())
+要实现电流为 I 的电流源，我们只需从右侧向量的第 a 行减去 I，并在第 b 行加上 I。这表示电流 I 从 a 流向 b。（CirSim.stampCurrentSource()）
 
-We need to add additional rows to the matrix to implement voltage
-sources.  Each voltage source needs an additional row to enforce
-the voltage constraint, and also an additional element in x (and
-an extra matrix column) to solve for the current (since we have no other
-way to obtain it).  For a voltage source with voltage Vs across
-nodes a and b, the voltage constraint equation is Vb-Va = Vs.  To express
-that as a row in the matrix, you add matrix elements 1
-and -1 in the extra row at columns b and a, and set the corresponding
-element of the right side (B) to Vs.  Also, to represent a flow of
-current I from node a to b, we add matrix elements 1 to -1 in rows
-a and b in the extra column.  (CirSim.stampVoltageSource())
-Now when solving for x, we get the voltage at each node, and the
-current through each voltage source.
+我们需要向矩阵添加额外的行来实现电压源。每个电压源需要额外的一行来强制执行电压约束，还需要 x 中的一个额外元素（以及一个额外的矩阵列）来求解电流（因为我们没有其他方法获得它）。对于跨节点 a 和 b 电压为 Vs 的电压源，电压约束方程为 Vb-Va = Vs。要在矩阵中表示为一行，你在额外行的第 b 列和第 a 列添加矩阵元素 1 和 -1，并将右侧（B）的相应元素设置为 Vs。此外，为了表示电流 I 从节点 a 流向 b，我们在额外列的第 a 行和第 b 行添加矩阵元素 1 和 -1。（CirSim.stampVoltageSource()）
+现在求解 x 时，我们得到每个节点的电压，以及流过每个电压源的电流。
 
-When simulating inductors, the current state changes over time.
-We use a small timestep value to step through time iteratively to
-simulate the circuit.  We treat an inductor as a current source in
-parallel with a resistor.  The current source has current equal to
-the current through the inductor at a particular time.  The resistor
-represents resistance to changes in current, and the resistance
-value is proportional to the inductance.  So for each time step,
-we solve the equation, get the new current, and then update
-the current source value.  (We just need to change the right
-side for this, not the matrix.)
+模拟电感时，电流状态随时间变化。我们使用一个小的时步值迭代地推进时间来模拟电路。我们将电感视为一个与电阻并联的电流源。电流源中的电流等于特定时刻流过电感的电流。电阻代表对电流变化的阻碍，电阻值与电感成正比。因此对于每个时步，我们求解方程，得到新的电流，然后更新电流源的值。（为此我们只需更改右侧，不需要更改矩阵。）
 
-This is numerical integration, and there are several ways to do it.
-There's forward Euler which we don't use.  There's backward Euler which is 
-more stable than forward Euler.  And there is trapezoidal which
-is more accurate than backward Euler but less stable.  You can select
-either trapezoidal or backward Euler.  Trapezoidal will give you
-better accuracy for something like an LRC circuit or a filter, but
-backward Euler will give you better stability (much less oscillation)
-if an inductor is suddenly switched on or off.  To implement these
-in our inductors, we simply choose different values for the resistor
-and the current through the current source, depending on which
-method is being used.
+这是数值积分，有几种方法可以做到。有我们未使用的前向欧拉法。有比前向欧拉法更稳定的后向欧拉法。还有比后向欧拉法更精确但稳定性较差的梯形法。你可以选择梯形法或后向欧拉法。对于像 LRC 电路或滤波器这样的东西，梯形法会给你更好的精度，但如果电感突然接通或断开，后向欧拉法会给你更好的稳定性（振荡少得多）。要在我们的电感中实现这些，我们只需根据正在使用的方法为电阻和流过电流源的电流选择不同的值。
 
-To simulate capacitors, you could simulate it as a voltage source
-in series with a resistor.  But this would require two extra rows
-in the matrix.  Instead, we simulate it as a current source in
-parallel with a resistor.  The resistor value is inversely proportional
-to the capacitance, because large capacitors can store more charge
-(accept more current flow) without a large change in voltage.  The
-current from the current source flows in a loop through the resistor
-and this simulates the charge on the capacitor.  This current changes
-after each timestep, like the inductor.  After each step, we get
-the new voltage and current and update the current source appropriately.
+要模拟电容器，你可以将其模拟为一个与电阻串联的电压源。但这需要在矩阵中增加两行。相反，我们将其模拟为一个与电阻并联的电流源。电阻值与电容成反比，因为大电容器可以在电压没有大幅变化的情况下存储更多电荷（接受更多电流流动）。来自电流源的电流在通过电阻的环路中流动，这模拟了电容器上的电荷。与电感一样，该电流在每个时步后都会变化。每步之后，我们得到新的电压和电流，并适当更新电流源。
 
-For nonlinear devices the matrix must be solved iteratively.  For example,
-a diode has current that is an exponential function of the voltage.
-For that we start with a given voltage and linearize the diode's
-response at that point, so we can represent it in the matrix.  We find
-the tangent line to the diode's response curve at that voltage,
-and that line can be expressed as a resistance (depending on the
-slope of the line) and a current source (depending on its height).
-After solving the matrix, we get a new voltage across the diode, and we
-compare it with the old voltage to see if it's nearly the same.  If
-not, then we have to calculate a new linearization and create a new
-matrix.  This continues until it converges on a value that is nearly
-the same as the previous one.
+对于非线性器件，矩阵必须迭代求解。例如，二极管的电流是电压的指数函数。为此，我们从给定的电压开始，在该点对二极管的响应进行线性化，这样我们就能在矩阵中表示它。我们找到二极管响应曲线在该电压处的切线，该直线可以表示为电阻（取决于直线的斜率）和电流源（取决于其高度）。求解矩阵后，我们得到二极管两端的电压，并将其与旧电压比较，看是否几乎相同。如果不是，那么我们必须计算新的线性化并创建新的矩阵。这持续进行，直到收敛到与前一个几乎相同的值。
 
-When simulating diodes and transistors, we have to be careful to limit the
-changes in voltage at each iteration.  Since the response is an
-exponential function, we could easily end up with an enormous current.
-The linearization could be too large to represent accurately in the
-matrix.
+模拟二极管和晶体管时，我们必须小心限制每次迭代的电压变化。由于响应是指数函数，我们很容易得到巨大的电流。线性化可能太大，无法在矩阵中准确表示。
 
-Nonlinear devices require iteration, which requires us to create a new
-matrix and fully solve it at least once per timestep.  If there are no
-nonlinear devices, we don't need to do this.  The matrix doesn't
-change, only the right side.  We can partially solve this matrix
-beforehand, by doing an LU factorization.  This saves a lot of time
-for large linear circuits, so we do this whenever possible.
-We call CircuitElm.nonLinear() for each element when analyzing the circuit
-to see if we need to do the extra work.
+非线性器件需要迭代，这要求我们每个时步至少创建一次新矩阵并完全求解。如果没有非线性器件，我们就不需要这样做。矩阵不变，只有右侧变化。我们可以预先部分求解此矩阵，通过执行 LU 分解。这对于大型线性电路节省了大量时间，因此只要可能我们就这样做。
+在分析电路时，我们对每个元件调用 CircuitElm.nonLinear()，看看是否需要做额外的工作。
 
-When analyzing a circuit, we call stamp() for each CircuitElm to
-create the matrix.  This creates the circuit elements that don't
-change.  Then for each time step, we call doStep().  This modifies
-the right side as needed (for linear elements) or modifies the
-matrix further (for nonlinear elements).  doStep() should also
-check to see if we are within convergence limits and set the
-converged flag to false if not.
-
+分析电路时，我们对每个 CircuitElm 调用 stamp() 来创建矩阵。这创建了不变化的电路元件。然后对于每个时步，我们调用 doStep()。这根据需要修改右侧（对于线性元件）或进一步修改矩阵（对于非线性元件）。doStep() 还应检查我们是否在收敛限值内，如果不在，则将 converged 标志设置为 false。

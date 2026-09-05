@@ -34,8 +34,8 @@ package com.lushprojects.circuitjs1.client;
 	    if (useEuroGates()) {
 		createEuroGatePolygon();
 	    } else {
-		// 0=topleft, 1-10 = top curve, 11 = right, 12-21=bottom curve,
-		// 22 = bottom left
+		// 0=左上角，1-10 = 顶部曲线，11 = 右侧，12-21 = 底部曲线，
+		// 22 = 左下角
 		Point triPoints[] = newPointArray(23);
 		interpPoint2(lead1, lead2, triPoints[0], triPoints[22], 0, hs2);
 		int i;

@@ -77,7 +77,7 @@ class AnalogSwitchElm extends CircuitElm {
 	current = (volts[0]-volts[1])/resistance;
     }
 	
-    // we need this to be able to change the matrix for each step
+    // 我们需要这个以便每一步都能更改矩阵
     boolean nonLinear() { return true; }
 
     void stamp() {
@@ -116,8 +116,8 @@ class AnalogSwitchElm extends CircuitElm {
 	arr[3] = "I = " + getCurrentDText(getCurrent());
 	arr[4] = "Vc = " + getVoltageText(volts[2]);
     }
-    // we have to just assume current will flow either way, even though that
-    // might cause singular matrix errors
+    // 我们只能假设电流无论如何都会流动，即使那样
+    // 可能会导致奇异矩阵错误
     boolean getConnection(int n1, int n2) {
 	if (n1 == 2 || n2 == 2)
 	    return false;
